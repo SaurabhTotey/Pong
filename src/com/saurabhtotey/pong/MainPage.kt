@@ -1,4 +1,5 @@
 package com.saurabhtotey.pong
 
-import kotlinx.html.*
-import kotlinx.html.dom.*
+fun main(args: Array<String>) {
+    println("yay, this works")
+}
