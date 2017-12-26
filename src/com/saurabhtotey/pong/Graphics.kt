@@ -3,28 +3,19 @@ package com.saurabhtotey.pong
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
-import kotlin.js.Math.random
 import kotlin.math.PI
 
 val screen = document.getElementById("screen") as HTMLCanvasElement
 val renderer = screen.getContext("2d") as CanvasRenderingContext2D
-lateinit var ball: Ball
+lateinit var game: Game
 
 fun main(args: Array<String>) {
-    makeBall()
-    draw()
-}
-
-fun makeBall() {
-    ball = Ball(25.0, Vector(if (random() < 0.5) 1.0 else -1.0, 0.0), Vector(0.5 * screen.width, 0.5 * screen.height))
+    game = Game(1, 1)
 }
 
 fun draw() {
+    //TODO make canvas viewport centered and scaled version of dimensions of gameWidth and gameHeight
     renderer.beginPath()
-    renderer.arc(ball.location.x, ball.location.y, ball.radius, 0.0, 2 * PI)
+    renderer.arc(game.ball.location.x, game.ball.location.y, game.ball.radius, 0.0, 2 * PI)
     renderer.stroke()
-}
-
-fun getCollisionAngleBetween(ball: Ball, paddle: Paddle): Int? {
-    TODO("implement")
 }

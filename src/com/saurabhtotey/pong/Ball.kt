@@ -15,7 +15,7 @@ class Ball(val radius: Double, private val velocity: Vector<Double>, location: V
 
     fun bounce(angle: Double) {
         val newMagnitude = this.velocity.magnitude * bounceSpeedMultiplier
-        this.velocity.x = -newMagnitude* cos(angle)
+        this.velocity.x = -newMagnitude * cos(angle)
         this.velocity.y = -newMagnitude * sin(angle)
     }
 
