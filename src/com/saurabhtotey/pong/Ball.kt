@@ -3,9 +3,9 @@ package com.saurabhtotey.pong
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Ball(val radius: Double, private val velocity: Vector<Double>, location: Vector<Double>, private val bounceSpeedMultiplier: Double = 1.05) {
+class Ball(val radius: Double, private val velocity: Vector<Double>, private val bounceSpeedMultiplier: Double = 1.05) {
 
-    val location: Vector<Double> = location
+    val location: Vector<Double> = Vector(0.5 * gameWidth, 0.5 * gameHeight)
         get() = Vector(field.x, field.y)
 
     fun move() {
