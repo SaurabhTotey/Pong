@@ -1,37 +1,36 @@
 package com.saurabhtotey.pong
 
-import kotlin.js.Math
+val aspectRatio = Vector(16, 9)
+const val scaling = 100
+val logicalCoordinates = Vector(aspectRatio.x * scaling, aspectRatio.y * scaling)
 
-val gameWidth = 1600
-val gameHeight = 900
-
-fun getCollisionAngleBetween(ball: Ball, paddle: Object): Int? {
-    TODO("implement")
+fun getCollisionAngleBetween(ball: Ball, paddle: Paddle): Double? {
+    return null
 }
 
-class Game(val numHumans: Int, val numComputers: Int) {
+class Game(val computerOpponent: Boolean) {
 
     lateinit var ball: Ball
-    val paddles = arrayListOf<Object>(Paddle(Direction.NEGATIVE, Axis.Y), Paddle(Direction.POSITIVE, Axis.Y)).addAll(when {
-        numHumans + numComputers == 2 -> {
-            arrayOf(Wall(Direction.NEGATIVE), Wall(Direction.POSITIVE))
-        }
-        numHumans + numComputers == 4 -> {
-            arrayOf(Paddle(Direction.NEGATIVE, Axis.X), Paddle(Direction.POSITIVE, Axis.X))
-        }
-        else -> throw Exception("Invalid number of players")
-    })
+    val paddles = arrayListOf<Paddle>()
+    var p1Score = 0
+    var p2Score = 0
+    val isFinished
+        get() = p1Score == 10 || p2Score == 10
 
     init {
         makeBall()
     }
 
     fun tick() {
+        if (this.isFinished){
+            return
+        }
         this.ball.move()
+        this.paddles.mapNotNull { getCollisionAngleBetween(this.ball, it) }.forEach { this.ball.bounce(it) }
     }
 
     fun makeBall() {
-        ball = Ball(Vector(0.0 + gameWidth, 0.0 + gameHeight).magnitude / 50, Vector(if (Math.random() < 0.5) 1.0 else -1.0, 0.0))
+
     }
 
 }
