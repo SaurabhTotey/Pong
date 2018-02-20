@@ -6,6 +6,7 @@ var Pong = function (_, Kotlin) {
   var Kind_CLASS = Kotlin.Kind.CLASS;
   var throwCCE = Kotlin.throwCCE;
   var throwUPAE = Kotlin.throwUPAE;
+  var math = Kotlin.kotlin.math;
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
   var Any = Object;
@@ -15,7 +16,7 @@ var Pong = function (_, Kotlin) {
     if (bounceSpeedMultiplier === void 0)
       bounceSpeedMultiplier = 1.05;
     this.radius = radius;
-    this.velocity_0 = velocity;
+    this.velocity = velocity;
     this.bounceSpeedMultiplier_0 = bounceSpeedMultiplier;
     this.location_twkhng$_0 = new Vector(0.5 * logicalCoordinates.x, 0.5 * logicalCoordinates.y);
   }
@@ -25,14 +26,8 @@ var Pong = function (_, Kotlin) {
     }
   });
   Ball.prototype.move = function () {
-    this.location.x = this.location.x + this.velocity_0.x;
-    this.location.y = this.location.y + this.velocity_0.y;
-  };
-  var Math_0 = Math;
-  Ball.prototype.bounce_14dthe$ = function (angle) {
-    var newMagnitude = this.velocity_0.magnitude * this.bounceSpeedMultiplier_0;
-    this.velocity_0.x = -newMagnitude * Math_0.cos(angle);
-    this.velocity_0.y = -newMagnitude * Math_0.sin(angle);
+    this.location.x = this.location.x + this.velocity.x;
+    this.location.y = this.location.y + this.velocity.y;
   };
   Ball.$metadata$ = {
     kind: Kind_CLASS,
@@ -67,11 +62,11 @@ var Pong = function (_, Kotlin) {
     return null;
   }
   function main(args) {
+    var tmp$;
     set_game(new Game(true));
     body.onresize = main$lambda;
-    while (!get_game().isFinished) {
-      get_game().tick();
-    }
+    (tmp$ = body.onresize) != null ? tmp$(new Event('')) : null;
+    renderer.arc(get_game().ball.location.x, get_game().ball.location.y, get_game().ball.radius, 0.0, 2 * math.PI);
   }
   var aspectRatio;
   var scaling;
@@ -132,14 +127,15 @@ var Pong = function (_, Kotlin) {
         destination.add_11rb$(tmp$_0);
       }
     }
-    var tmp$_1;
-    tmp$_1 = destination.iterator();
-    while (tmp$_1.hasNext()) {
-      var element_0 = tmp$_1.next();
-      this.ball.bounce_14dthe$(element_0);
+    if (!destination.isEmpty()) {
+      this.ball.velocity.x = -this.ball.velocity.x;
+    }
+    if (this.ball.location.y - this.ball.radius < 0 || this.ball.location.y + this.ball.radius > logicalCoordinates.y) {
+      this.ball.velocity.y = -this.ball.velocity.y;
     }
   };
   Game.prototype.makeBall = function () {
+    this.ball = new Ball(50.0, new Vector(0.0, 0.0));
   };
   Game.$metadata$ = {
     kind: Kind_CLASS,
@@ -214,6 +210,7 @@ var Pong = function (_, Kotlin) {
     this.x = x;
     this.y = y;
   }
+  var Math_0 = Math;
   Object.defineProperty(Vector.prototype, 'magnitude', {
     get: function () {
       var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;

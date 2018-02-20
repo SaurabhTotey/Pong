@@ -3,7 +3,9 @@ package com.saurabhtotey.pong
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLBodyElement
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.events.Event
 import kotlin.browser.document
+import kotlin.math.PI
 
 val body = document.getElementById("body") as HTMLBodyElement
 val screen = document.getElementById("screen") as HTMLCanvasElement
@@ -19,8 +21,9 @@ fun main(args: Array<String>) {
         referenceDimension = if (screen.height / aspectRatio.y < screen.width / aspectRatio.x) "y" else "x"
         null
     }
-    while (!game.isFinished) {
-        game.tick()
-        //TODO: draw
-    }
+    body.onresize?.invoke(Event(""))
+    //while (!game.isFinished) {
+        //game.tick()
+        renderer.arc(game.ball.location.x, game.ball.location.y, game.ball.radius, 0.0, 2 * PI)
+    //}
 }

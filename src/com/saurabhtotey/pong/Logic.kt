@@ -26,11 +26,16 @@ class Game(val computerOpponent: Boolean) {
             return
         }
         this.ball.move()
-        this.paddles.mapNotNull { getCollisionAngleBetween(this.ball, it) }.forEach { this.ball.bounce(it) }
+        if (this.paddles.mapNotNull { getCollisionAngleBetween(this.ball, it) }.isNotEmpty()) {
+            this.ball.velocity.x = -this.ball.velocity.x
+        }
+        if (this.ball.location.y - this.ball.radius < 0 || this.ball.location.y + this.ball.radius > logicalCoordinates.y) {
+            this.ball.velocity.y = -this.ball.velocity.y
+        }
     }
 
     fun makeBall() {
-
+        ball = Ball(50.0, Vector(0.0, 0.0))
     }
 
 }
