@@ -1,9 +1,9 @@
 package com.saurabhtotey.pong
 
-enum class WallCount(val value: Int) {
-    TOP(0), BOTTOM(1), LEFT(2), RIGHT(3)
-}
-
+/**
+ * A class that represents a wall; a wall is the edge of the playable area
+ * Top is 0 count, Bottom is 1 count, Left is 2 count, Right is 3 count
+ */
 class Wall(val gameWidth: Int, val gameHeight: Int, override val count: Int) : GameObject() {
 
     //TODO: test
