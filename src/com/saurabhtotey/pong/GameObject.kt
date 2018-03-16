@@ -40,9 +40,8 @@ abstract class GameObject {
     abstract fun tickAction()
 
     /**
-     * What the game object does when it collides with the another given gameObject or the wall
-     * Wall collisions pass null as the collided object
+     * What the game object does when it collides with the another given gameObject
      */
-    abstract fun onCollide(other: GameObject?)
+    abstract fun onCollide(other: GameObject)
 
 }

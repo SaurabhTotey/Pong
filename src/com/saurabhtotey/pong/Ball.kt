@@ -25,15 +25,16 @@ class Ball(val gameWidth: Int, val gameHeight: Int, override val count: Int, var
     /**
      * When the ball collides, it either bounces, or stops based on Pong rules
      */
-    override fun onCollide(other: GameObject?) {
+    override fun onCollide(other: GameObject) {
         if (this.y < 0 || this.y > this.gameHeight) {
             this.yVelocity *= (-1.1).toFloat()
         }
-        if (other != null) {
+        if (other is Wall) {
             this.xVelocity *= (-1.1).toFloat()
         } else if (this.x < 0 || this.x > this.gameWidth) {
             this.speed = 0.toFloat()
         }
+        this.maxSpeed *= 1.1.toFloat()
     }
 
 }
