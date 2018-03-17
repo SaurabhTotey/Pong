@@ -6,7 +6,7 @@ import kotlin.js.Math.random
  * The class that represents a game ball
  * Is the object in the game that gets moved around
  */
-class Ball(val gameWidth: Int, val gameHeight: Int, override val count: Int, var maxSpeed: Float) : GameObject() {
+class Ball(override val gameWidth: Int, override val gameHeight: Int, override val count: Int, var maxSpeed: Float) : GameObject() {
 
     override val width = gameHeight.toFloat() / 15
     override val height = this.width
@@ -31,7 +31,7 @@ class Ball(val gameWidth: Int, val gameHeight: Int, override val count: Int, var
      * When the ball collides, it either bounces, or stops based on Pong rules
      */
     override fun onCollide(other: GameObject) {
-        if (this.y < 0 || this.y + this.height > this.gameHeight) {
+        if (other is Wall) {
             this.yVelocity *= (-1.1).toFloat()
         } else {
             this.xVelocity *= (-1.1).toFloat()

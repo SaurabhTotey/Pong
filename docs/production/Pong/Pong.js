@@ -16,8 +16,8 @@ var Pong = function (_, Kotlin) {
   Wall.prototype.constructor = Wall;
   function Ball(gameWidth, gameHeight, count, maxSpeed) {
     GameObject.call(this);
-    this.gameWidth = gameWidth;
-    this.gameHeight = gameHeight;
+    this.gameWidth_9r60ep$_0 = gameWidth;
+    this.gameHeight_r6006g$_0 = gameHeight;
     this.count_i5glos$_0 = count;
     this.maxSpeed = maxSpeed;
     this.width_8s5nz7$_0 = this.gameHeight / 15;
@@ -28,6 +28,16 @@ var Pong = function (_, Kotlin) {
     this.yVelocity_1xiael$_0 = Math.random() * 2 - 1;
     this.speed = this.maxSpeed;
   }
+  Object.defineProperty(Ball.prototype, 'gameWidth', {
+    get: function () {
+      return this.gameWidth_9r60ep$_0;
+    }
+  });
+  Object.defineProperty(Ball.prototype, 'gameHeight', {
+    get: function () {
+      return this.gameHeight_r6006g$_0;
+    }
+  });
   Object.defineProperty(Ball.prototype, 'count', {
     get: function () {
       return this.count_i5glos$_0;
@@ -78,7 +88,7 @@ var Pong = function (_, Kotlin) {
   Ball.prototype.tickAction = function () {
   };
   Ball.prototype.onCollide_l333uf$ = function (other) {
-    if (this.y < 0 || this.y + this.height > this.gameHeight) {
+    if (Kotlin.isType(other, Wall)) {
       this.yVelocity = this.yVelocity * -1.1;
     }
      else {
@@ -238,6 +248,18 @@ var Pong = function (_, Kotlin) {
   GameObject.prototype.update = function () {
     this.x = this.x + this.xVelocity;
     this.y = this.y + this.yVelocity;
+    if (this.x < 0) {
+      this.x = 0;
+    }
+    if (this.y < 0) {
+      this.y = 0;
+    }
+    if (this.x + this.width > this.gameWidth) {
+      this.x = this.gameWidth - this.width;
+    }
+    if (this.y + this.height > this.gameHeight) {
+      this.y = this.gameHeight - this.height;
+    }
     this.tickAction();
   };
   GameObject.prototype.collides_l333uf$ = function (other) {
@@ -272,6 +294,26 @@ var Pong = function (_, Kotlin) {
       return Unit;
     };
   }
+  function main$lambda_0(closure$mainGame) {
+    return function (it) {
+      var tmp$;
+      switch ((Kotlin.isType(tmp$ = it, KeyboardEvent) ? tmp$ : throwCCE()).key) {
+        case 'ArrowUp':
+          closure$mainGame.paddles[1].move_6taknv$(true);
+          break;
+        case 'ArrowDown':
+          closure$mainGame.paddles[1].move_6taknv$(false);
+          break;
+        case 'w':
+          closure$mainGame.paddles[0].move_6taknv$(true);
+          break;
+        case 's':
+          closure$mainGame.paddles[0].move_6taknv$(false);
+          break;
+      }
+      return Unit;
+    };
+  }
   function main(args) {
     var tmp$, tmp$_0;
     var mainGame = new Game();
@@ -283,11 +325,12 @@ var Pong = function (_, Kotlin) {
     var clearScreen = main$clearScreen(renderer, screen);
     var windowInterval = {v: -1};
     windowInterval.v = window.setInterval(main$lambda(mainGame, windowInterval, clearScreen, renderer), 1000 / 20 | 0);
+    window.onkeydown = main$lambda_0(mainGame);
   }
   function Paddle(gameWidth, gameHeight, count) {
     GameObject.call(this);
-    this.gameWidth = gameWidth;
-    this.gameHeight = gameHeight;
+    this.gameWidth_tmrae4$_0 = gameWidth;
+    this.gameHeight_43b3wd$_0 = gameHeight;
     this.count_oj5yw9$_0 = count;
     this.width_xwgwlu$_0 = this.gameWidth / 50;
     this.height_neem97$_0 = this.gameHeight / 5;
@@ -297,6 +340,16 @@ var Pong = function (_, Kotlin) {
     this.yVelocity_hy2zku$_0 = 0;
     this.adjustPosition();
   }
+  Object.defineProperty(Paddle.prototype, 'gameWidth', {
+    get: function () {
+      return this.gameWidth_tmrae4$_0;
+    }
+  });
+  Object.defineProperty(Paddle.prototype, 'gameHeight', {
+    get: function () {
+      return this.gameHeight_43b3wd$_0;
+    }
+  });
   Object.defineProperty(Paddle.prototype, 'count', {
     get: function () {
       return this.count_oj5yw9$_0;
@@ -348,10 +401,20 @@ var Pong = function (_, Kotlin) {
     this.x = this.count === 0 ? 0 : this.gameWidth - this.width;
     this.y = (this.gameHeight - this.height) / 2;
   };
+  Paddle.prototype.move_6taknv$ = function (isUp) {
+    this.yVelocity = this.gameHeight / 30;
+    if (isUp) {
+      this.yVelocity = -this.yVelocity;
+    }
+  };
   Paddle.prototype.tickAction = function () {
     this.speed = 0;
   };
   Paddle.prototype.onCollide_l333uf$ = function (other) {
+    if (!Kotlin.isType(other, Ball)) {
+      return;
+    }
+    other.x = this.count === 0 ? this.width - 1 : this.x - other.width + 1;
   };
   Paddle.$metadata$ = {
     kind: Kind_CLASS,
@@ -360,8 +423,8 @@ var Pong = function (_, Kotlin) {
   };
   function Wall(gameWidth, gameHeight, count) {
     GameObject.call(this);
-    this.gameWidth = gameWidth;
-    this.gameHeight = gameHeight;
+    this.gameWidth_glr0lg$_0 = gameWidth;
+    this.gameHeight_8m797n$_0 = gameHeight;
     this.count_2yh3av$_0 = count;
     this.width_6etueq$_0 = this.count < 2 ? this.gameWidth : 1;
     this.height_n7wuob$_0 = this.count > 1 ? this.gameHeight : 1;
@@ -370,6 +433,16 @@ var Pong = function (_, Kotlin) {
     this.xVelocity_vjfa77$_0 = 0;
     this.yVelocity_safbeq$_0 = 0;
   }
+  Object.defineProperty(Wall.prototype, 'gameWidth', {
+    get: function () {
+      return this.gameWidth_glr0lg$_0;
+    }
+  });
+  Object.defineProperty(Wall.prototype, 'gameHeight', {
+    get: function () {
+      return this.gameHeight_8m797n$_0;
+    }
+  });
   Object.defineProperty(Wall.prototype, 'count', {
     get: function () {
       return this.count_2yh3av$_0;
@@ -418,33 +491,6 @@ var Pong = function (_, Kotlin) {
     }
   });
   Wall.prototype.tickAction = function () {
-  };
-  Wall.prototype.collides_l333uf$ = function (other) {
-    var tmp$;
-    if (!Kotlin.isType(other, Ball)) {
-      return GameObject.prototype.collides_l333uf$.call(this, other);
-    }
-    if (!GameObject.prototype.collides_l333uf$.call(this, other)) {
-      switch (this.count) {
-        case 0:
-          tmp$ = other.y <= 0;
-          break;
-        case 1:
-          tmp$ = other.y + other.height >= this.gameHeight;
-          break;
-        case 2:
-          tmp$ = other.x <= 0;
-          break;
-        case 3:
-          tmp$ = other.x + other.width >= this.gameWidth;
-          break;
-        default:tmp$ = false;
-          break;
-      }
-    }
-     else
-      tmp$ = true;
-    return tmp$;
   };
   Wall.prototype.onCollide_l333uf$ = function (other) {
     if (this.count > 1 && Kotlin.isType(other, Ball)) {

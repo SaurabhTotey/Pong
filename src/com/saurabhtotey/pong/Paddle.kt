@@ -3,8 +3,9 @@ package com.saurabhtotey.pong
 /**
  * The class that could be a game's paddle
  * Are the only objects the players can directly control
+ * A paddle with a 0 count is on the left, a paddle with a 1 count is on the right
  */
-class Paddle(val gameWidth: Int, val gameHeight: Int, override val count: Int) : GameObject() {
+class Paddle(override val gameWidth: Int, override val gameHeight: Int, override val count: Int) : GameObject() {
 
     override val width = this.gameWidth.toFloat() / 50
     override val height = this.gameHeight.toFloat() / 5
@@ -29,6 +30,16 @@ class Paddle(val gameWidth: Int, val gameHeight: Int, override val count: Int) :
     }
 
     /**
+     * Moves the paddle; true means up and false means down
+     */
+    fun move(isUp: Boolean) {
+        this.yVelocity = this.gameHeight.toFloat() / 30
+        if (isUp) {
+            this.yVelocity = -this.yVelocity
+        }
+    }
+
+    /**
      * Every tick, the game paddle stop moving
      */
     override fun tickAction() {
@@ -36,8 +47,13 @@ class Paddle(val gameWidth: Int, val gameHeight: Int, override val count: Int) :
     }
 
     /**
-     * The paddle itself doesn't do anything on a collide
+     * If the paddle collides with a ball, it moves the ball to the edge of the paddle
      */
-    override fun onCollide(other: GameObject) {}
+    override fun onCollide(other: GameObject) {
+        if (other !is Ball) {
+            return
+        }
+        other.x = if (this.count == 0) this.width - 1 else this.x - other.width + 1
+    }
 
 }

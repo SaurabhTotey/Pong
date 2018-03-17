@@ -2,6 +2,7 @@ package com.saurabhtotey.pong
 
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
 import kotlin.browser.window
 
@@ -32,4 +33,20 @@ fun main(args: Array<String>) {
         mainGame.tick()
         mainGame.allObjects.forEach { renderer.fillRect(it.x.toDouble(), it.y.toDouble(), it.width.toDouble(), it.height.toDouble()) }
     }, 1000 / 20)
+    window.onkeydown = {
+        when ((it as KeyboardEvent).key) {
+            "ArrowUp" -> {
+                mainGame.paddles[1].move(true)
+            }
+            "ArrowDown" -> {
+                mainGame.paddles[1].move(false)
+            }
+            "w" -> {
+                mainGame.paddles[0].move(true)
+            }
+            "s" -> {
+                mainGame.paddles[0].move(false)
+            }
+        }
+    }
 }

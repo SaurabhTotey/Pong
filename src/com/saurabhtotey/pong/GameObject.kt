@@ -8,6 +8,8 @@ import kotlin.math.sqrt
  */
 abstract class GameObject {
 
+    abstract val gameWidth: Int
+    abstract val gameHeight: Int
     abstract val count: Int
     abstract var x: Float
     abstract var y: Float
@@ -36,13 +38,25 @@ abstract class GameObject {
     fun update() {
         this.x += this.xVelocity
         this.y += this.yVelocity
+        if (this.x < 0) {
+            this.x = 0.toFloat()
+        }
+        if (this.y < 0) {
+            this.y = 0.toFloat()
+        }
+        if (this.x + this.width > this.gameWidth) {
+            this.x = this.gameWidth - this.width
+        }
+        if (this.y + this.height > this.gameHeight) {
+            this.y = this.gameHeight - this.height
+        }
         this.tickAction()
     }
 
     /**
      * Checks whether the game object intersects or collides with another object
      */
-    open fun collides(other: GameObject): Boolean {
+    fun collides(other: GameObject): Boolean {
         return other.x < this.x + this.width && other.x + other.width > this.x
                 && other.y < this.y + this.height && other.y + other.height > this.y
     }

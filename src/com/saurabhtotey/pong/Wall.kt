@@ -4,7 +4,7 @@ package com.saurabhtotey.pong
  * A class that represents a wall; a wall is the edge of the playable area
  * Top is 0 count, Bottom is 1 count, Left is 2 count, Right is 3 count
  */
-class Wall(val gameWidth: Int, val gameHeight: Int, override val count: Int) : GameObject() {
+class Wall(override val gameWidth: Int, override val gameHeight: Int, override val count: Int) : GameObject() {
 
     override val width = if (this.count < 2) this.gameWidth.toFloat() else 1.toFloat()
     override val height = if (this.count > 1) this.gameHeight.toFloat() else 1.toFloat()
@@ -17,30 +17,6 @@ class Wall(val gameWidth: Int, val gameHeight: Int, override val count: Int) : G
      * Walls don't do anything every tick
      */
     override fun tickAction() {}
-
-    /**
-     * Walls do special collision for balls to account for whether the ball has past the wall
-     */
-    override fun collides(other: GameObject): Boolean {
-        if (other !is Ball) {
-            return super.collides(other)
-        }
-        return super.collides(other) || when(this.count) {
-            0 -> {
-                other.y <= 0
-            }
-            1 -> {
-                other.y + other.height >= gameHeight
-            }
-            2 -> {
-                other.x <= 0
-            }
-            3 -> {
-                other.x + other.width >= gameWidth
-            }
-            else -> false
-        }
-    }
 
     /**
      * When a wall collides with a ball, the game ends
