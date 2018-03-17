@@ -29,30 +29,34 @@ fun main(args: Array<String>) {
         renderer.fillRect(0.0, 0.0, screen.width.toDouble(), screen.height.toDouble())
         renderer.fillStyle = oldStyle
     }
+    val keys = arrayOf("ArrowUp", "ArrowDown", "w", "s")
+    val keyStates = hashMapOf<String, Boolean>()
+    keys.forEach { keyStates[it] = false }
+    val keyActions = hashMapOf(
+            keys[0] to { mainGame.paddles[1].move(true) },
+            keys[1] to { mainGame.paddles[1].move(false) },
+            keys[2] to { mainGame.paddles[0].move(true) },
+            keys[3] to { mainGame.paddles[0].move(false) }
+    )
     var windowInterval = -1
     windowInterval = window.setInterval({
         if (mainGame.isFinished) {
             window.clearInterval(windowInterval)
         }
+        keys.filter { keyStates[it]!! }.forEach { keyActions[it]!!() }
         clearScreen()
         mainGame.tick()
         renderer.fillText("${mainGame.playerTwoScore} : ${mainGame.playerOneScore}", screen.width.toDouble() / 2, fontSize.toDouble(), screen.width.toDouble())
         mainGame.allObjects.forEach { renderer.fillRect(it.x.toDouble(), it.y.toDouble(), it.width.toDouble(), it.height.toDouble()) }
     }, 1000 / 20)
     window.onkeydown = {
-        when ((it as KeyboardEvent).key) {
-            "ArrowUp" -> {
-                mainGame.paddles[1].move(true)
-            }
-            "ArrowDown" -> {
-                mainGame.paddles[1].move(false)
-            }
-            "w" -> {
-                mainGame.paddles[0].move(true)
-            }
-            "s" -> {
-                mainGame.paddles[0].move(false)
-            }
+        if (keyStates.keys.contains((it as KeyboardEvent).key)) {
+            keyStates[it.key] = true
+        }
+    }
+    window.onkeyup = {
+        if (keyStates.keys.contains((it as KeyboardEvent).key)) {
+            keyStates[it.key] = false
         }
     }
 }

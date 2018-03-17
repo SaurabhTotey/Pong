@@ -8,6 +8,9 @@ var Pong = function (_, Kotlin) {
   var throwUPAE = Kotlin.throwUPAE;
   var equals = Kotlin.equals;
   var throwCCE = Kotlin.throwCCE;
+  var to = Kotlin.kotlin.to_ujzrz7$;
+  var hashMapOf = Kotlin.kotlin.collections.hashMapOf_qfcya0$;
+  var ensureNotNull = Kotlin.ensureNotNull;
   Ball.prototype = Object.create(GameObject.prototype);
   Ball.prototype.constructor = Ball;
   Paddle.prototype = Object.create(GameObject.prototype);
@@ -278,43 +281,84 @@ var Pong = function (_, Kotlin) {
       closure$renderer.fillStyle = oldStyle;
     };
   }
-  function main$lambda(closure$mainGame, closure$windowInterval, closure$clearScreen, closure$renderer, closure$screen, closure$fontSize) {
+  function main$lambda(closure$mainGame) {
     return function () {
-      if (closure$mainGame.isFinished) {
-        window.clearInterval(closure$windowInterval.v);
-      }
-      closure$clearScreen();
-      closure$mainGame.tick();
-      closure$renderer.fillText(closure$mainGame.playerTwoScore.toString() + ' : ' + closure$mainGame.playerOneScore, closure$screen.width / 2, closure$fontSize, closure$screen.width);
-      var $receiver = closure$mainGame.allObjects;
-      var tmp$;
-      for (tmp$ = 0; tmp$ !== $receiver.length; ++tmp$) {
-        var element = $receiver[tmp$];
-        closure$renderer.fillRect(element.x, element.y, element.width, element.height);
-      }
+      closure$mainGame.paddles[1].move_6taknv$(true);
       return Unit;
     };
   }
   function main$lambda_0(closure$mainGame) {
-    return function (it) {
+    return function () {
+      closure$mainGame.paddles[1].move_6taknv$(false);
+      return Unit;
+    };
+  }
+  function main$lambda_1(closure$mainGame) {
+    return function () {
+      closure$mainGame.paddles[0].move_6taknv$(true);
+      return Unit;
+    };
+  }
+  function main$lambda_2(closure$mainGame) {
+    return function () {
+      closure$mainGame.paddles[0].move_6taknv$(false);
+      return Unit;
+    };
+  }
+  function main$lambda_3(closure$mainGame, closure$windowInterval, closure$keys, closure$keyStates, closure$keyActions, closure$clearScreen, closure$renderer, closure$screen, closure$fontSize) {
+    return function () {
+      if (closure$mainGame.isFinished) {
+        window.clearInterval(closure$windowInterval.v);
+      }
+      var $receiver = closure$keys;
+      var destination = ArrayList_init();
       var tmp$;
-      switch ((Kotlin.isType(tmp$ = it, KeyboardEvent) ? tmp$ : throwCCE()).key) {
-        case 'ArrowUp':
-          closure$mainGame.paddles[1].move_6taknv$(true);
-          break;
-        case 'ArrowDown':
-          closure$mainGame.paddles[1].move_6taknv$(false);
-          break;
-        case 'w':
-          closure$mainGame.paddles[0].move_6taknv$(true);
-          break;
-        case 's':
-          closure$mainGame.paddles[0].move_6taknv$(false);
-          break;
+      for (tmp$ = 0; tmp$ !== $receiver.length; ++tmp$) {
+        var element = $receiver[tmp$];
+        if (ensureNotNull(closure$keyStates.get_11rb$(element)))
+          destination.add_11rb$(element);
+      }
+      var tmp$_0;
+      tmp$_0 = destination.iterator();
+      while (tmp$_0.hasNext()) {
+        var element_0 = tmp$_0.next();
+        ensureNotNull(closure$keyActions.get_11rb$(element_0))();
+      }
+      closure$clearScreen();
+      closure$mainGame.tick();
+      closure$renderer.fillText(closure$mainGame.playerTwoScore.toString() + ' : ' + closure$mainGame.playerOneScore, closure$screen.width / 2, closure$fontSize, closure$screen.width);
+      var $receiver_0 = closure$mainGame.allObjects;
+      var tmp$_1;
+      for (tmp$_1 = 0; tmp$_1 !== $receiver_0.length; ++tmp$_1) {
+        var element_1 = $receiver_0[tmp$_1];
+        closure$renderer.fillRect(element_1.x, element_1.y, element_1.width, element_1.height);
       }
       return Unit;
     };
   }
+  function main$lambda_4(closure$keyStates) {
+    return function (it) {
+      var tmp$;
+      if (closure$keyStates.keys.contains_11rb$((Kotlin.isType(tmp$ = it, KeyboardEvent) ? tmp$ : throwCCE()).key)) {
+        var $receiver = closure$keyStates;
+        var key = it.key;
+        $receiver.put_xwzc9p$(key, true);
+      }
+      return Unit;
+    };
+  }
+  function main$lambda_5(closure$keyStates) {
+    return function (it) {
+      var tmp$;
+      if (closure$keyStates.keys.contains_11rb$((Kotlin.isType(tmp$ = it, KeyboardEvent) ? tmp$ : throwCCE()).key)) {
+        var $receiver = closure$keyStates;
+        var key = it.key;
+        $receiver.put_xwzc9p$(key, false);
+      }
+      return Unit;
+    };
+  }
+  var HashMap_init = Kotlin.kotlin.collections.HashMap_init_q3lmfv$;
   function main(args) {
     var tmp$, tmp$_0;
     var mainGame = new Game();
@@ -327,9 +371,18 @@ var Pong = function (_, Kotlin) {
     renderer.font = '50px Courier New';
     renderer.textAlign = 'center';
     var clearScreen = main$clearScreen(renderer, screen);
+    var keys = ['ArrowUp', 'ArrowDown', 'w', 's'];
+    var keyStates = HashMap_init();
+    var tmp$_1;
+    for (tmp$_1 = 0; tmp$_1 !== keys.length; ++tmp$_1) {
+      var element = keys[tmp$_1];
+      keyStates.put_xwzc9p$(element, false);
+    }
+    var keyActions = hashMapOf([to(keys[0], main$lambda(mainGame)), to(keys[1], main$lambda_0(mainGame)), to(keys[2], main$lambda_1(mainGame)), to(keys[3], main$lambda_2(mainGame))]);
     var windowInterval = {v: -1};
-    windowInterval.v = window.setInterval(main$lambda(mainGame, windowInterval, clearScreen, renderer, screen, fontSize), 1000 / 20 | 0);
-    window.onkeydown = main$lambda_0(mainGame);
+    windowInterval.v = window.setInterval(main$lambda_3(mainGame, windowInterval, keys, keyStates, keyActions, clearScreen, renderer, screen, fontSize), 1000 / 20 | 0);
+    window.onkeydown = main$lambda_4(keyStates);
+    window.onkeyup = main$lambda_5(keyStates);
   }
   function Paddle(gameWidth, gameHeight, count) {
     GameObject.call(this);
