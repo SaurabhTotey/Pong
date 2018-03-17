@@ -278,13 +278,14 @@ var Pong = function (_, Kotlin) {
       closure$renderer.fillStyle = oldStyle;
     };
   }
-  function main$lambda(closure$mainGame, closure$windowInterval, closure$clearScreen, closure$renderer) {
+  function main$lambda(closure$mainGame, closure$windowInterval, closure$clearScreen, closure$renderer, closure$screen, closure$fontSize) {
     return function () {
       if (closure$mainGame.isFinished) {
         window.clearInterval(closure$windowInterval.v);
       }
       closure$clearScreen();
       closure$mainGame.tick();
+      closure$renderer.fillText(closure$mainGame.playerTwoScore.toString() + ' : ' + closure$mainGame.playerOneScore, closure$screen.width / 2, closure$fontSize, closure$screen.width);
       var $receiver = closure$mainGame.allObjects;
       var tmp$;
       for (tmp$ = 0; tmp$ !== $receiver.length; ++tmp$) {
@@ -322,9 +323,12 @@ var Pong = function (_, Kotlin) {
     screen.height = mainGame.height;
     var renderer = Kotlin.isType(tmp$_0 = screen.getContext('2d'), CanvasRenderingContext2D) ? tmp$_0 : throwCCE();
     renderer.fillStyle = '#ADD8E6';
+    var fontSize = 50;
+    renderer.font = '50px Courier New';
+    renderer.textAlign = 'center';
     var clearScreen = main$clearScreen(renderer, screen);
     var windowInterval = {v: -1};
-    windowInterval.v = window.setInterval(main$lambda(mainGame, windowInterval, clearScreen, renderer), 1000 / 20 | 0);
+    windowInterval.v = window.setInterval(main$lambda(mainGame, windowInterval, clearScreen, renderer, screen, fontSize), 1000 / 20 | 0);
     window.onkeydown = main$lambda_0(mainGame);
   }
   function Paddle(gameWidth, gameHeight, count) {
@@ -402,7 +406,7 @@ var Pong = function (_, Kotlin) {
     this.y = (this.gameHeight - this.height) / 2;
   };
   Paddle.prototype.move_6taknv$ = function (isUp) {
-    this.yVelocity = this.gameHeight / 30;
+    this.yVelocity = this.gameHeight / 20;
     if (isUp) {
       this.yVelocity = -this.yVelocity;
     }

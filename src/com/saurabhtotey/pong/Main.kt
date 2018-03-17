@@ -1,6 +1,8 @@
 package com.saurabhtotey.pong
 
+import org.w3c.dom.CENTER
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.CanvasTextAlign
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
@@ -18,6 +20,9 @@ fun main(args: Array<String>) {
     screen.height = mainGame.height
     val renderer = screen.getContext("2d") as CanvasRenderingContext2D
     renderer.fillStyle = "#ADD8E6"
+    val fontSize = 50
+    renderer.font = "${fontSize}px Courier New"
+    renderer.textAlign = CanvasTextAlign.CENTER
     fun clearScreen() {
         val oldStyle = renderer.fillStyle
         renderer.fillStyle = "#000"
@@ -31,6 +36,7 @@ fun main(args: Array<String>) {
         }
         clearScreen()
         mainGame.tick()
+        renderer.fillText("${mainGame.playerTwoScore} : ${mainGame.playerOneScore}", screen.width.toDouble() / 2, fontSize.toDouble(), screen.width.toDouble())
         mainGame.allObjects.forEach { renderer.fillRect(it.x.toDouble(), it.y.toDouble(), it.width.toDouble(), it.height.toDouble()) }
     }, 1000 / 20)
     window.onkeydown = {

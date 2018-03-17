@@ -33,7 +33,7 @@ class Paddle(override val gameWidth: Int, override val gameHeight: Int, override
      * Moves the paddle; true means up and false means down
      */
     fun move(isUp: Boolean) {
-        this.yVelocity = this.gameHeight.toFloat() / 30
+        this.yVelocity = this.gameHeight.toFloat() / 20
         if (isUp) {
             this.yVelocity = -this.yVelocity
         }
