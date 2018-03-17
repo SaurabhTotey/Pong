@@ -42,7 +42,7 @@ abstract class GameObject {
     /**
      * Checks whether the game object intersects or collides with another object
      */
-    fun collides(other: GameObject): Boolean {
+    open fun collides(other: GameObject): Boolean {
         return other.x < this.x + this.width && other.x + other.width > this.x
                 && other.y < this.y + this.height && other.y + other.height > this.y
     }

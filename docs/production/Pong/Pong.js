@@ -419,6 +419,33 @@ var Pong = function (_, Kotlin) {
   });
   Wall.prototype.tickAction = function () {
   };
+  Wall.prototype.collides_l333uf$ = function (other) {
+    var tmp$;
+    if (!Kotlin.isType(other, Ball)) {
+      return GameObject.prototype.collides_l333uf$.call(this, other);
+    }
+    if (!GameObject.prototype.collides_l333uf$.call(this, other)) {
+      switch (this.count) {
+        case 0:
+          tmp$ = other.y <= 0;
+          break;
+        case 1:
+          tmp$ = other.y + other.height >= this.gameHeight;
+          break;
+        case 2:
+          tmp$ = other.x <= 0;
+          break;
+        case 3:
+          tmp$ = other.x + other.width >= this.gameWidth;
+          break;
+        default:tmp$ = false;
+          break;
+      }
+    }
+     else
+      tmp$ = true;
+    return tmp$;
+  };
   Wall.prototype.onCollide_l333uf$ = function (other) {
     if (this.count > 1 && Kotlin.isType(other, Ball)) {
       other.speed = 0;

@@ -19,6 +19,30 @@ class Wall(val gameWidth: Int, val gameHeight: Int, override val count: Int) : G
     override fun tickAction() {}
 
     /**
+     * Walls do special collision for balls to account for whether the ball has past the wall
+     */
+    override fun collides(other: GameObject): Boolean {
+        if (other !is Ball) {
+            return super.collides(other)
+        }
+        return super.collides(other) || when(this.count) {
+            0 -> {
+                other.y <= 0
+            }
+            1 -> {
+                other.y + other.height >= gameHeight
+            }
+            2 -> {
+                other.x <= 0
+            }
+            3 -> {
+                other.x + other.width >= gameWidth
+            }
+            else -> false
+        }
+    }
+
+    /**
      * When a wall collides with a ball, the game ends
      */
     override fun onCollide(other: GameObject) {
