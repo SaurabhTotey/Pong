@@ -35,6 +35,13 @@ abstract class GameObject {
     }
 
     /**
+     * Checks whether the game object intersects or collides with another object
+     */
+    fun collides(other: GameObject): Boolean {
+        return other.x < this.x + this.width && other.x + other.width > this.x && other.y < this.y + this.height && other.height + other.y > this.y
+    }
+
+    /**
      * What the game object does every tick
      */
     abstract fun tickAction()

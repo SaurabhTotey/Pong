@@ -8,7 +8,7 @@ import kotlin.js.Math.random
  */
 class Ball(val gameWidth: Int, val gameHeight: Int, override val count: Int, var maxSpeed: Float) : GameObject() {
 
-    override val width = gameHeight.toFloat() / 5
+    override val width = gameHeight.toFloat() / 15
     override val height = this.width
     override var x = (gameWidth.toFloat() - this.width) / 2
     override var y = (gameHeight.toFloat() - this.height) / 2

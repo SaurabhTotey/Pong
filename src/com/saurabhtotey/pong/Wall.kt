@@ -6,11 +6,10 @@ package com.saurabhtotey.pong
  */
 class Wall(val gameWidth: Int, val gameHeight: Int, override val count: Int) : GameObject() {
 
-    //TODO: test
     override val width = if (this.count < 2) this.gameWidth.toFloat() else 1.toFloat()
     override val height = if (this.count > 1) this.gameHeight.toFloat() else 1.toFloat()
-    override var x = if (this.count < 3) 0.toFloat() else this.gameWidth.toFloat()
-    override var y = if (this.count == 0 || this.count > 1) 0.toFloat() else gameHeight.toFloat()
+    override var x = if (this.count < 3) 0.toFloat() else this.gameWidth.toFloat() - 1
+    override var y = if (this.count == 0 || this.count > 1) 0.toFloat() else gameHeight.toFloat() - 1
     override var xVelocity = 0.toFloat()
     override var yVelocity = 0.toFloat()
 
