@@ -29,6 +29,7 @@ fun main(args: Array<String>) {
             window.clearInterval(windowInterval)
         }
         clearScreen()
+        mainGame.tick()
         mainGame.allObjects.forEach { renderer.fillRect(it.x.toDouble(), it.y.toDouble(), it.width.toDouble(), it.height.toDouble()) }
     }, 1000 / 20)
 }

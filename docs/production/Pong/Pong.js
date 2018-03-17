@@ -3,9 +3,10 @@ if (typeof kotlin === 'undefined') {
 }
 var Pong = function (_, Kotlin) {
   'use strict';
+  var Unit = Kotlin.kotlin.Unit;
   var Kind_CLASS = Kotlin.Kind.CLASS;
   var throwUPAE = Kotlin.throwUPAE;
-  var Unit = Kotlin.kotlin.Unit;
+  var equals = Kotlin.equals;
   var throwCCE = Kotlin.throwCCE;
   Ball.prototype = Object.create(GameObject.prototype);
   Ball.prototype.constructor = Ball;
@@ -25,6 +26,7 @@ var Pong = function (_, Kotlin) {
     this.y_op7ypi$_0 = (this.gameHeight - this.height) / 2;
     this.xVelocity_56i972$_0 = this.count % 2 === 0 ? 1 : -1;
     this.yVelocity_1xiael$_0 = Math.random() * 2 - 1;
+    this.speed = this.maxSpeed;
   }
   Object.defineProperty(Ball.prototype, 'count', {
     get: function () {
@@ -74,16 +76,16 @@ var Pong = function (_, Kotlin) {
     }
   });
   Ball.prototype.tickAction = function () {
-    this.speed = this.maxSpeed;
   };
   Ball.prototype.onCollide_l333uf$ = function (other) {
-    if (this.y < 0 || this.y > this.gameHeight) {
+    if (this.y < 0 || this.y + this.height > this.gameHeight) {
       this.yVelocity = this.yVelocity * -1.1;
     }
      else {
       this.xVelocity = this.xVelocity * -1.1;
     }
     this.maxSpeed = this.maxSpeed * 1.1;
+    this.speed = this.maxSpeed;
   };
   Ball.$metadata$ = {
     kind: Kind_CLASS,
@@ -145,7 +147,7 @@ var Pong = function (_, Kotlin) {
       var element = $receiver[tmp$];
       element.adjustPosition();
     }
-    this.ball = new Ball(this.width, this.height, this.lastScorerer, this.width / 20);
+    this.ball = new Ball(this.width, this.height, this.lastScorerer, this.height / 40);
   };
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_ww73n8$;
   Game.prototype.tick = function () {
@@ -168,7 +170,7 @@ var Pong = function (_, Kotlin) {
       var tmp$_2;
       for (tmp$_2 = 0; tmp$_2 !== $receiver_1.length; ++tmp$_2) {
         var element_1 = $receiver_1[tmp$_2];
-        if (element_0.collides_l333uf$(element_1))
+        if (element_0.collides_l333uf$(element_1) && !equals(element_0, element_1))
           destination.add_11rb$(element_1);
       }
       var tmp$_3;
@@ -222,9 +224,15 @@ var Pong = function (_, Kotlin) {
       return Math_0.sqrt(x);
     },
     set: function (value) {
-      var scale = value / this.speed;
-      this.xVelocity = this.xVelocity * scale;
-      this.yVelocity = this.yVelocity * scale;
+      if (this.speed === 0) {
+        this.xVelocity = value / Math_0.sqrt(2);
+        this.yVelocity = this.xVelocity;
+      }
+       else {
+        var scale = value / this.speed;
+        this.xVelocity = this.xVelocity * scale;
+        this.yVelocity = this.yVelocity * scale;
+      }
     }
   });
   GameObject.prototype.update = function () {
@@ -233,7 +241,7 @@ var Pong = function (_, Kotlin) {
     this.tickAction();
   };
   GameObject.prototype.collides_l333uf$ = function (other) {
-    return other.x < this.x + this.width && other.x + other.width > this.x && other.y < this.y + this.height && other.height + other.y > this.y;
+    return other.x < this.x + this.width && other.x + other.width > this.x && other.y < this.y + this.height && other.y + other.height > this.y;
   };
   GameObject.$metadata$ = {
     kind: Kind_CLASS,
@@ -254,6 +262,7 @@ var Pong = function (_, Kotlin) {
         window.clearInterval(closure$windowInterval.v);
       }
       closure$clearScreen();
+      closure$mainGame.tick();
       var $receiver = closure$mainGame.allObjects;
       var tmp$;
       for (tmp$ = 0; tmp$ !== $receiver.length; ++tmp$) {

@@ -16,22 +16,28 @@ class Ball(val gameWidth: Int, val gameHeight: Int, override val count: Int, var
     override var yVelocity = random().toFloat() * 2 - 1 //A random value from -1 to 1
 
     /**
-     * Every tick, the ball will reset its speed to be the highest speed it can be
+     * Sets the ball's speed to the max it can be
      */
-    override fun tickAction() {
+    init {
         this.speed = this.maxSpeed
     }
+
+    /**
+     * The ball doesn't do anything every tick
+     */
+    override fun tickAction() {}
 
     /**
      * When the ball collides, it either bounces, or stops based on Pong rules
      */
     override fun onCollide(other: GameObject) {
-        if (this.y < 0 || this.y > this.gameHeight) {
+        if (this.y < 0 || this.y + this.height > this.gameHeight) {
             this.yVelocity *= (-1.1).toFloat()
         } else {
             this.xVelocity *= (-1.1).toFloat()
         }
         this.maxSpeed *= 1.1.toFloat()
+        this.speed = maxSpeed
     }
 
 }

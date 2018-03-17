@@ -20,9 +20,14 @@ abstract class GameObject {
     var speed
         get() = sqrt(xVelocity.pow(2) + yVelocity.pow(2))
         set(value) {
-            val scale = value / this.speed
-            this.xVelocity *= scale
-            this.yVelocity *= scale
+            if (this.speed == 0.toFloat()) {
+                this.xVelocity = value / sqrt(2.toFloat())
+                this.yVelocity = this.xVelocity
+            } else {
+                val scale = value / this.speed
+                this.xVelocity *= scale
+                this.yVelocity *= scale
+            }
         }
 
     /**
@@ -38,7 +43,8 @@ abstract class GameObject {
      * Checks whether the game object intersects or collides with another object
      */
     fun collides(other: GameObject): Boolean {
-        return other.x < this.x + this.width && other.x + other.width > this.x && other.y < this.y + this.height && other.height + other.y > this.y
+        return other.x < this.x + this.width && other.x + other.width > this.x
+                && other.y < this.y + this.height && other.y + other.height > this.y
     }
 
     /**
