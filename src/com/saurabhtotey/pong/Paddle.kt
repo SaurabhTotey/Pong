@@ -8,10 +8,25 @@ class Paddle(val gameWidth: Int, val gameHeight: Int, override val count: Int) :
 
     override val width = this.gameWidth.toFloat() / 50
     override val height = this.gameHeight.toFloat() / 5
-    override var x = if (this.count == 0) 0.toFloat() else this.gameWidth - this.width
-    override var y = (this.gameHeight - this.height) / 2
+    override var x = 0.toFloat()
+    override var y = 0.toFloat()
     override var xVelocity = 0.toFloat()
     override var yVelocity = 0.toFloat()
+
+    /**
+     * When the paddle is created, its position is set to where it actually belongs
+     */
+    init {
+        this.adjustPosition()
+    }
+
+    /**
+     * Sets the paddles back to their original positions
+     */
+    fun adjustPosition() {
+        this.x = if (this.count == 0) 0.toFloat() else this.gameWidth - this.width
+        this.y = (this.gameHeight - this.height) / 2
+    }
 
     /**
      * Every tick, the game paddle stop moving

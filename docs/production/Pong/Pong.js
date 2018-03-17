@@ -4,6 +4,7 @@ if (typeof kotlin === 'undefined') {
 var Pong = function (_, Kotlin) {
   'use strict';
   var Kind_CLASS = Kotlin.Kind.CLASS;
+  var throwUPAE = Kotlin.throwUPAE;
   var Unit = Kotlin.kotlin.Unit;
   var throwCCE = Kotlin.throwCCE;
   Ball.prototype = Object.create(GameObject.prototype);
@@ -93,7 +94,10 @@ var Pong = function (_, Kotlin) {
   function Game() {
     this.width = 480;
     this.height = 320;
-    this.ball = new Ball(this.width, this.height, 0, 5);
+    this.playerOneScore = 0;
+    this.playerTwoScore = 0;
+    this.lastScorerer = 0;
+    this.ball_5gfzb9$_0 = this.ball_5gfzb9$_0;
     var array = Array_0(2);
     var tmp$;
     tmp$ = array.length - 1 | 0;
@@ -109,8 +113,18 @@ var Pong = function (_, Kotlin) {
     }
     this.walls = array_0;
     this.isFinished_pkry1k$_0 = false;
-    this.allObjects = [this.paddles[0], this.paddles[1], this.ball, this.walls[0], this.walls[1], this.walls[2], this.walls[3]];
+    this.start();
   }
+  Object.defineProperty(Game.prototype, 'ball', {
+    get: function () {
+      if (this.ball_5gfzb9$_0 == null)
+        return throwUPAE('ball');
+      return this.ball_5gfzb9$_0;
+    },
+    set: function (ball) {
+      this.ball_5gfzb9$_0 = ball;
+    }
+  });
   Object.defineProperty(Game.prototype, 'isFinished', {
     get: function () {
       return this.ball.speed === 0;
@@ -119,34 +133,75 @@ var Pong = function (_, Kotlin) {
       this.isFinished_pkry1k$_0 = isFinished;
     }
   });
+  Object.defineProperty(Game.prototype, 'allObjects', {
+    get: function () {
+      return [this.paddles[0], this.paddles[1], this.ball, this.walls[0], this.walls[1], this.walls[2], this.walls[3]];
+    }
+  });
+  Game.prototype.start = function () {
+    var $receiver = this.paddles;
+    var tmp$;
+    for (tmp$ = 0; tmp$ !== $receiver.length; ++tmp$) {
+      var element = $receiver[tmp$];
+      element.adjustPosition();
+    }
+    this.ball = new Ball(this.width, this.height, this.lastScorerer, this.width / 20);
+  };
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_ww73n8$;
   Game.prototype.tick = function () {
+    var tmp$;
     if (this.isFinished) {
       return;
     }
     var $receiver = this.allObjects;
-    var tmp$;
-    for (tmp$ = 0; tmp$ !== $receiver.length; ++tmp$) {
-      var element = $receiver[tmp$];
+    var tmp$_0;
+    for (tmp$_0 = 0; tmp$_0 !== $receiver.length; ++tmp$_0) {
+      var element = $receiver[tmp$_0];
       element.update();
     }
     var $receiver_0 = this.allObjects;
-    var tmp$_0;
-    for (tmp$_0 = 0; tmp$_0 !== $receiver_0.length; ++tmp$_0) {
-      var element_0 = $receiver_0[tmp$_0];
+    var tmp$_1;
+    for (tmp$_1 = 0; tmp$_1 !== $receiver_0.length; ++tmp$_1) {
+      var element_0 = $receiver_0[tmp$_1];
       var $receiver_1 = this.allObjects;
       var destination = ArrayList_init();
-      var tmp$_1;
-      for (tmp$_1 = 0; tmp$_1 !== $receiver_1.length; ++tmp$_1) {
-        var element_1 = $receiver_1[tmp$_1];
+      var tmp$_2;
+      for (tmp$_2 = 0; tmp$_2 !== $receiver_1.length; ++tmp$_2) {
+        var element_1 = $receiver_1[tmp$_2];
         if (element_0.collides_l333uf$(element_1))
           destination.add_11rb$(element_1);
       }
-      var tmp$_2;
-      tmp$_2 = destination.iterator();
-      while (tmp$_2.hasNext()) {
-        var element_2 = tmp$_2.next();
+      var tmp$_3;
+      tmp$_3 = destination.iterator();
+      while (tmp$_3.hasNext()) {
+        var element_2 = tmp$_3.next();
         element_0.onCollide_l333uf$(element_2);
+      }
+    }
+    if (this.isFinished) {
+      var $receiver_2 = this.allObjects;
+      var destination_0 = ArrayList_init();
+      var tmp$_4;
+      for (tmp$_4 = 0; tmp$_4 !== $receiver_2.length; ++tmp$_4) {
+        var element_3 = $receiver_2[tmp$_4];
+        if (element_3.collides_l333uf$(this.ball))
+          destination_0.add_11rb$(element_3);
+      }
+      var ballCollidedObjects = destination_0;
+      tmp$ = ballCollidedObjects.iterator();
+      while (tmp$.hasNext()) {
+        var collidedObject = tmp$.next();
+        if (!Kotlin.isType(collidedObject, Wall)) {
+          continue;
+        }
+        if (collidedObject.count === 2) {
+          this.lastScorerer = 0;
+          this.playerOneScore = this.playerOneScore + 1 | 0;
+        }
+        if (collidedObject.count === 3) {
+          this.lastScorerer = 1;
+          this.playerTwoScore = this.playerTwoScore + 1 | 0;
+        }
       }
     }
   };
@@ -227,10 +282,11 @@ var Pong = function (_, Kotlin) {
     this.count_oj5yw9$_0 = count;
     this.width_xwgwlu$_0 = this.gameWidth / 50;
     this.height_neem97$_0 = this.gameHeight / 5;
-    this.x_gjjzxc$_0 = this.count === 0 ? 0 : this.gameWidth - this.width;
-    this.y_gjjzy7$_0 = (this.gameHeight - this.height) / 2;
+    this.x_gjjzxc$_0 = 0;
+    this.y_gjjzy7$_0 = 0;
     this.xVelocity_ep30sd$_0 = 0;
     this.yVelocity_hy2zku$_0 = 0;
+    this.adjustPosition();
   }
   Object.defineProperty(Paddle.prototype, 'count', {
     get: function () {
@@ -279,6 +335,10 @@ var Pong = function (_, Kotlin) {
       this.yVelocity_hy2zku$_0 = yVelocity;
     }
   });
+  Paddle.prototype.adjustPosition = function () {
+    this.x = this.count === 0 ? 0 : this.gameWidth - this.width;
+    this.y = (this.gameHeight - this.height) / 2;
+  };
   Paddle.prototype.tickAction = function () {
     this.speed = 0;
   };
