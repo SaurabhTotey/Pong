@@ -276,7 +276,7 @@ var Pong = function (_, Kotlin) {
   function main$clearScreen(closure$renderer, closure$screen) {
     return function () {
       var oldStyle = closure$renderer.fillStyle;
-      closure$renderer.fillStyle = '#000';
+      closure$renderer.fillStyle = '#FFF';
       closure$renderer.fillRect(0.0, 0.0, closure$screen.width, closure$screen.height);
       closure$renderer.fillStyle = oldStyle;
     };
@@ -305,32 +305,46 @@ var Pong = function (_, Kotlin) {
       return Unit;
     };
   }
-  function main$lambda_3(closure$mainGame, closure$windowInterval, closure$keys, closure$keyStates, closure$keyActions, closure$clearScreen, closure$renderer, closure$screen, closure$fontSize) {
+  function main$lambda$lambda(closure$renderer, closure$image, closure$x, closure$y, closure$w, closure$h) {
+    return function (it) {
+      closure$renderer.drawImage(closure$image, closure$x, closure$y, closure$w, closure$h);
+      return Unit;
+    };
+  }
+  function main$lambda_3(closure$mainGame, closure$screen, closure$renderer, closure$windowInterval, closure$keys, closure$keyStates, closure$keyActions, closure$clearScreen, closure$fontSize) {
     return function () {
+      var tmp$;
       if (closure$mainGame.isFinished) {
+        var x = (closure$screen.width - closure$mainGame.ball.width) / 2;
+        var y = (closure$screen.height - closure$mainGame.ball.height) / 2;
+        var w = closure$mainGame.ball.width;
+        var h = closure$mainGame.ball.height;
+        var image = Kotlin.isType(tmp$ = document.createElement('IMG'), HTMLImageElement) ? tmp$ : throwCCE();
+        image.src = 'restart.png';
+        image.onload = main$lambda$lambda(closure$renderer, image, x, y, w, h);
         window.clearInterval(closure$windowInterval.v);
       }
       var $receiver = closure$keys;
       var destination = ArrayList_init();
-      var tmp$;
-      for (tmp$ = 0; tmp$ !== $receiver.length; ++tmp$) {
-        var element = $receiver[tmp$];
+      var tmp$_0;
+      for (tmp$_0 = 0; tmp$_0 !== $receiver.length; ++tmp$_0) {
+        var element = $receiver[tmp$_0];
         if (ensureNotNull(closure$keyStates.get_11rb$(element)))
           destination.add_11rb$(element);
       }
-      var tmp$_0;
-      tmp$_0 = destination.iterator();
-      while (tmp$_0.hasNext()) {
-        var element_0 = tmp$_0.next();
+      var tmp$_1;
+      tmp$_1 = destination.iterator();
+      while (tmp$_1.hasNext()) {
+        var element_0 = tmp$_1.next();
         ensureNotNull(closure$keyActions.get_11rb$(element_0))();
       }
       closure$clearScreen();
       closure$mainGame.tick();
       closure$renderer.fillText(closure$mainGame.playerTwoScore.toString() + ' : ' + closure$mainGame.playerOneScore, closure$screen.width / 2, closure$fontSize, closure$screen.width);
       var $receiver_0 = closure$mainGame.allObjects;
-      var tmp$_1;
-      for (tmp$_1 = 0; tmp$_1 !== $receiver_0.length; ++tmp$_1) {
-        var element_1 = $receiver_0[tmp$_1];
+      var tmp$_2;
+      for (tmp$_2 = 0; tmp$_2 !== $receiver_0.length; ++tmp$_2) {
+        var element_1 = $receiver_0[tmp$_2];
         closure$renderer.fillRect(element_1.x, element_1.y, element_1.width, element_1.height);
       }
       return Unit;
@@ -380,7 +394,7 @@ var Pong = function (_, Kotlin) {
     }
     var keyActions = hashMapOf([to(keys[0], main$lambda(mainGame)), to(keys[1], main$lambda_0(mainGame)), to(keys[2], main$lambda_1(mainGame)), to(keys[3], main$lambda_2(mainGame))]);
     var windowInterval = {v: -1};
-    windowInterval.v = window.setInterval(main$lambda_3(mainGame, windowInterval, keys, keyStates, keyActions, clearScreen, renderer, screen, fontSize), 1000 / 20 | 0);
+    windowInterval.v = window.setInterval(main$lambda_3(mainGame, screen, renderer, windowInterval, keys, keyStates, keyActions, clearScreen, fontSize), 1000 / 20 | 0);
     window.onkeydown = main$lambda_4(keyStates);
     window.onkeyup = main$lambda_5(keyStates);
   }

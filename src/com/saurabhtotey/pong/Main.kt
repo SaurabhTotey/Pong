@@ -1,9 +1,6 @@
 package com.saurabhtotey.pong
 
-import org.w3c.dom.CENTER
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.CanvasTextAlign
-import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.*
 import org.w3c.dom.events.KeyboardEvent
 import kotlin.browser.document
 import kotlin.browser.window
@@ -25,7 +22,7 @@ fun main(args: Array<String>) {
     renderer.textAlign = CanvasTextAlign.CENTER
     fun clearScreen() {
         val oldStyle = renderer.fillStyle
-        renderer.fillStyle = "#000"
+        renderer.fillStyle = "#FFF"
         renderer.fillRect(0.0, 0.0, screen.width.toDouble(), screen.height.toDouble())
         renderer.fillStyle = oldStyle
     }
@@ -41,6 +38,13 @@ fun main(args: Array<String>) {
     var windowInterval = -1
     windowInterval = window.setInterval({
         if (mainGame.isFinished) {
+            val x = (screen.width - mainGame.ball.width).toDouble() / 2
+            val y = (screen.height - mainGame.ball.height).toDouble() / 2
+            val w = mainGame.ball.width.toDouble()
+            val h = mainGame.ball.height.toDouble()
+            val image = document.createElement("IMG") as HTMLImageElement
+            image.src = "restart.png"
+            image.onload = { renderer.drawImage(image, x, y, w, h) }
             window.clearInterval(windowInterval)
         }
         keys.filter { keyStates[it]!! }.forEach { keyActions[it]!!() }
