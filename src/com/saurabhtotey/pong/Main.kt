@@ -2,6 +2,7 @@ package com.saurabhtotey.pong
 
 import org.w3c.dom.*
 import org.w3c.dom.events.KeyboardEvent
+import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
 
@@ -35,17 +36,15 @@ fun main(args: Array<String>) {
             keys[2] to { mainGame.paddles[0].move(true) },
             keys[3] to { mainGame.paddles[0].move(false) }
     )
-    var windowInterval = -1
-    windowInterval = window.setInterval({
+    val centerX = (screen.width - mainGame.ball.width).toDouble() / 2
+    val centerY = (screen.height - mainGame.ball.height).toDouble() / 2
+    val centerW = mainGame.ball.width.toDouble()
+    val centerH = mainGame.ball.height.toDouble()
+    window.setInterval({
         if (mainGame.isFinished) {
-            val x = (screen.width - mainGame.ball.width).toDouble() / 2
-            val y = (screen.height - mainGame.ball.height).toDouble() / 2
-            val w = mainGame.ball.width.toDouble()
-            val h = mainGame.ball.height.toDouble()
             val image = document.createElement("IMG") as HTMLImageElement
             image.src = "restart.png"
-            image.onload = { renderer.drawImage(image, x, y, w, h) }
-            window.clearInterval(windowInterval)
+            image.onload = { renderer.drawImage(image, centerX, centerY, centerW, centerH) }
         }
         keys.filter { keyStates[it]!! }.forEach { keyActions[it]!!() }
         clearScreen()
@@ -61,6 +60,12 @@ fun main(args: Array<String>) {
     window.onkeyup = {
         if (keyStates.keys.contains((it as KeyboardEvent).key)) {
             keyStates[it.key] = false
+        }
+    }
+    screen.onclick = {
+        it as MouseEvent
+        if (mainGame.isFinished && it.offsetX > centerX && it.offsetX < centerX + centerW && it.offsetY > centerY && it.offsetY < centerY + centerH) {
+            mainGame.start()
         }
     }
 }

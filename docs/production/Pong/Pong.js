@@ -305,24 +305,19 @@ var Pong = function (_, Kotlin) {
       return Unit;
     };
   }
-  function main$lambda$lambda(closure$renderer, closure$image, closure$x, closure$y, closure$w, closure$h) {
+  function main$lambda$lambda(closure$renderer, closure$image, closure$centerX, closure$centerY, closure$centerW, closure$centerH) {
     return function (it) {
-      closure$renderer.drawImage(closure$image, closure$x, closure$y, closure$w, closure$h);
+      closure$renderer.drawImage(closure$image, closure$centerX, closure$centerY, closure$centerW, closure$centerH);
       return Unit;
     };
   }
-  function main$lambda_3(closure$mainGame, closure$screen, closure$renderer, closure$windowInterval, closure$keys, closure$keyStates, closure$keyActions, closure$clearScreen, closure$fontSize) {
+  function main$lambda_3(closure$mainGame, closure$renderer, closure$centerX, closure$centerY, closure$centerW, closure$centerH, closure$keys, closure$keyStates, closure$keyActions, closure$clearScreen, closure$screen, closure$fontSize) {
     return function () {
       var tmp$;
       if (closure$mainGame.isFinished) {
-        var x = (closure$screen.width - closure$mainGame.ball.width) / 2;
-        var y = (closure$screen.height - closure$mainGame.ball.height) / 2;
-        var w = closure$mainGame.ball.width;
-        var h = closure$mainGame.ball.height;
         var image = Kotlin.isType(tmp$ = document.createElement('IMG'), HTMLImageElement) ? tmp$ : throwCCE();
         image.src = 'restart.png';
-        image.onload = main$lambda$lambda(closure$renderer, image, x, y, w, h);
-        window.clearInterval(closure$windowInterval.v);
+        image.onload = main$lambda$lambda(closure$renderer, image, closure$centerX, closure$centerY, closure$centerW, closure$centerH);
       }
       var $receiver = closure$keys;
       var destination = ArrayList_init();
@@ -372,6 +367,16 @@ var Pong = function (_, Kotlin) {
       return Unit;
     };
   }
+  function main$lambda_6(closure$mainGame, closure$centerX, closure$centerW, closure$centerY, closure$centerH) {
+    return function (it) {
+      var tmp$;
+      Kotlin.isType(tmp$ = it, MouseEvent) ? tmp$ : throwCCE();
+      if (closure$mainGame.isFinished && it.offsetX > closure$centerX && it.offsetX < closure$centerX + closure$centerW && it.offsetY > closure$centerY && it.offsetY < closure$centerY + closure$centerH) {
+        closure$mainGame.start();
+      }
+      return Unit;
+    };
+  }
   var HashMap_init = Kotlin.kotlin.collections.HashMap_init_q3lmfv$;
   function main(args) {
     var tmp$, tmp$_0;
@@ -393,10 +398,14 @@ var Pong = function (_, Kotlin) {
       keyStates.put_xwzc9p$(element, false);
     }
     var keyActions = hashMapOf([to(keys[0], main$lambda(mainGame)), to(keys[1], main$lambda_0(mainGame)), to(keys[2], main$lambda_1(mainGame)), to(keys[3], main$lambda_2(mainGame))]);
-    var windowInterval = {v: -1};
-    windowInterval.v = window.setInterval(main$lambda_3(mainGame, screen, renderer, windowInterval, keys, keyStates, keyActions, clearScreen, fontSize), 1000 / 20 | 0);
+    var centerX = (screen.width - mainGame.ball.width) / 2;
+    var centerY = (screen.height - mainGame.ball.height) / 2;
+    var centerW = mainGame.ball.width;
+    var centerH = mainGame.ball.height;
+    window.setInterval(main$lambda_3(mainGame, renderer, centerX, centerY, centerW, centerH, keys, keyStates, keyActions, clearScreen, screen, fontSize), 1000 / 20 | 0);
     window.onkeydown = main$lambda_4(keyStates);
     window.onkeyup = main$lambda_5(keyStates);
+    screen.onclick = main$lambda_6(mainGame, centerX, centerW, centerY, centerH);
   }
   function Paddle(gameWidth, gameHeight, count) {
     GameObject.call(this);
