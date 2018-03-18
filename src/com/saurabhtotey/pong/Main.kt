@@ -5,6 +5,7 @@ import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
+import kotlin.math.abs
 
 
 /**
@@ -25,10 +26,10 @@ fun main(args: Array<String>) {
     val keyStates = hashMapOf<String, Boolean>()
     keys.forEach { keyStates[it] = false }
     val keyActions = hashMapOf(
-            keys[0] to { mainGame.paddles[1].move(true) },
-            keys[1] to { mainGame.paddles[1].move(false) },
-            keys[2] to { mainGame.paddles[0].move(true) },
-            keys[3] to { mainGame.paddles[0].move(false) }
+            keys[0] to { mainGame.paddles[1].also { it.idleTicks = 0 }.move(true) },
+            keys[1] to { mainGame.paddles[1].also { it.idleTicks = 0 }.move(false) },
+            keys[2] to { mainGame.paddles[0].also { it.idleTicks = 0 }.move(true) },
+            keys[3] to { mainGame.paddles[0].also { it.idleTicks = 0 }.move(false) }
     )
     val centerX = (screen.width - mainGame.ball.width).toDouble() / 2
     val centerY = (screen.height - mainGame.ball.height).toDouble() / 2
@@ -38,9 +39,19 @@ fun main(args: Array<String>) {
         if (mainGame.isFinished) {
             val image = document.createElement("IMG") as HTMLImageElement
             image.src = "restart.png"
+            renderer.fillRect(centerX, centerY, centerW, centerH)
             image.onload = { renderer.drawImage(image, centerX, centerY, centerW, centerH) }
         } else {
             keys.filter { keyStates[it]!! }.forEach { keyActions[it]!!() }
+            mainGame.paddles.filter { it.isCpu }.forEach {
+                val paddleCenter = it.y + it.height / 2
+                val ballCenter = mainGame.ball.y + mainGame.ball.height / 2
+                when {
+                    abs(paddleCenter - ballCenter) < screen.height / 10 -> { /*No action taken*/ }
+                    paddleCenter > ballCenter -> it.move(true)
+                    paddleCenter < ballCenter -> it.move(false)
+                }
+            }
             renderer.clearRect(0.0, 0.0, screen.width.toDouble(), screen.height.toDouble())
             mainGame.tick()
             renderer.fillText("${mainGame.playerTwoScore} : ${mainGame.playerOneScore}", screen.width.toDouble() / 2, fontSize.toDouble(), screen.width.toDouble())
@@ -82,6 +93,7 @@ fun main(args: Array<String>) {
         it as MouseEvent
         if (paddleToDrag != null) {
             paddleToDrag!!.y += (it.offsetY - lastMouseY!!).toFloat()
+            paddleToDrag!!.idleTicks = 0
             lastMouseY = it.offsetY
         }
     }

@@ -276,25 +276,33 @@ var Pong = function (_, Kotlin) {
   };
   function main$lambda(closure$mainGame) {
     return function () {
-      closure$mainGame.paddles[1].move_6taknv$(true);
+      var $receiver = closure$mainGame.paddles[1];
+      $receiver.idleTicks = 0;
+      $receiver.move_6taknv$(true);
       return Unit;
     };
   }
   function main$lambda_0(closure$mainGame) {
     return function () {
-      closure$mainGame.paddles[1].move_6taknv$(false);
+      var $receiver = closure$mainGame.paddles[1];
+      $receiver.idleTicks = 0;
+      $receiver.move_6taknv$(false);
       return Unit;
     };
   }
   function main$lambda_1(closure$mainGame) {
     return function () {
-      closure$mainGame.paddles[0].move_6taknv$(true);
+      var $receiver = closure$mainGame.paddles[0];
+      $receiver.idleTicks = 0;
+      $receiver.move_6taknv$(true);
       return Unit;
     };
   }
   function main$lambda_2(closure$mainGame) {
     return function () {
-      closure$mainGame.paddles[0].move_6taknv$(false);
+      var $receiver = closure$mainGame.paddles[0];
+      $receiver.idleTicks = 0;
+      $receiver.move_6taknv$(false);
       return Unit;
     };
   }
@@ -310,6 +318,7 @@ var Pong = function (_, Kotlin) {
       if (closure$mainGame.isFinished) {
         var image = Kotlin.isType(tmp$ = document.createElement('IMG'), HTMLImageElement) ? tmp$ : throwCCE();
         image.src = 'restart.png';
+        closure$renderer.fillRect(closure$centerX, closure$centerY, closure$centerW, closure$centerH);
         image.onload = main$lambda$lambda(closure$renderer, image, closure$centerX, closure$centerY, closure$centerW, closure$centerH);
       }
        else {
@@ -327,14 +336,37 @@ var Pong = function (_, Kotlin) {
           var element_0 = tmp$_1.next();
           ensureNotNull(closure$keyActions.get_11rb$(element_0))();
         }
-        closure$renderer.clearRect(0.0, 0.0, closure$screen.width, closure$screen.height);
-        closure$mainGame.tick();
-        closure$renderer.fillText(closure$mainGame.playerTwoScore.toString() + ' : ' + closure$mainGame.playerOneScore, closure$screen.width / 2, closure$fontSize, closure$screen.width);
-        var $receiver_0 = closure$mainGame.allObjects;
+        var $receiver_0 = closure$mainGame.paddles;
+        var destination_0 = ArrayList_init();
         var tmp$_2;
         for (tmp$_2 = 0; tmp$_2 !== $receiver_0.length; ++tmp$_2) {
           var element_1 = $receiver_0[tmp$_2];
-          closure$renderer.fillRect(element_1.x, element_1.y, element_1.width, element_1.height);
+          if (element_1.isCpu)
+            destination_0.add_11rb$(element_1);
+        }
+        var tmp$_3;
+        tmp$_3 = destination_0.iterator();
+        while (tmp$_3.hasNext()) {
+          var element_2 = tmp$_3.next();
+          var closure$mainGame_0 = closure$mainGame;
+          var closure$screen_0 = closure$screen;
+          var paddleCenter = element_2.y + element_2.height / 2;
+          var ballCenter = closure$mainGame_0.ball.y + closure$mainGame_0.ball.height / 2;
+          var x = paddleCenter - ballCenter;
+          if (Math_0.abs(x) >= (closure$screen_0.height / 10 | 0))
+            if (paddleCenter > ballCenter)
+              element_2.move_6taknv$(true);
+            else if (paddleCenter < ballCenter)
+              element_2.move_6taknv$(false);
+        }
+        closure$renderer.clearRect(0.0, 0.0, closure$screen.width, closure$screen.height);
+        closure$mainGame.tick();
+        closure$renderer.fillText(closure$mainGame.playerTwoScore.toString() + ' : ' + closure$mainGame.playerOneScore, closure$screen.width / 2, closure$fontSize, closure$screen.width);
+        var $receiver_1 = closure$mainGame.allObjects;
+        var tmp$_4;
+        for (tmp$_4 = 0; tmp$_4 !== $receiver_1.length; ++tmp$_4) {
+          var element_3 = $receiver_1[tmp$_4];
+          closure$renderer.fillRect(element_3.x, element_3.y, element_3.width, element_3.height);
         }
       }
       return Unit;
@@ -403,6 +435,7 @@ var Pong = function (_, Kotlin) {
       Kotlin.isType(tmp$ = it, MouseEvent) ? tmp$ : throwCCE();
       if (closure$paddleToDrag.v != null) {
         ensureNotNull(closure$paddleToDrag.v).y = ensureNotNull(closure$paddleToDrag.v).y + (it.offsetY - ensureNotNull(closure$lastMouseY.v));
+        ensureNotNull(closure$paddleToDrag.v).idleTicks = 0;
         closure$lastMouseY.v = it.offsetY;
       }
       return Unit;
@@ -453,6 +486,8 @@ var Pong = function (_, Kotlin) {
     this.y_gjjzy7$_0 = 0;
     this.xVelocity_ep30sd$_0 = 0;
     this.yVelocity_hy2zku$_0 = 0;
+    this.idleTicks = 0;
+    this.isCpu_reqzsq$_0 = false;
     this.adjustPosition();
   }
   Object.defineProperty(Paddle.prototype, 'gameWidth', {
@@ -512,9 +547,18 @@ var Pong = function (_, Kotlin) {
       this.yVelocity_hy2zku$_0 = yVelocity;
     }
   });
+  Object.defineProperty(Paddle.prototype, 'isCpu', {
+    get: function () {
+      return this.idleTicks > 75;
+    },
+    set: function (isCpu) {
+      this.isCpu_reqzsq$_0 = isCpu;
+    }
+  });
   Paddle.prototype.adjustPosition = function () {
     this.x = this.count === 0 ? 0 : this.gameWidth - this.width;
     this.y = (this.gameHeight - this.height) / 2;
+    this.idleTicks = 60;
   };
   Paddle.prototype.move_6taknv$ = function (isUp) {
     this.yVelocity = this.gameHeight / 20;
@@ -524,6 +568,7 @@ var Pong = function (_, Kotlin) {
   };
   Paddle.prototype.tickAction = function () {
     this.speed = 0;
+    this.idleTicks = this.idleTicks + 1 | 0;
   };
   Paddle.prototype.onCollide_l333uf$ = function (other) {
     if (!Kotlin.isType(other, Ball)) {
