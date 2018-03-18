@@ -21,13 +21,6 @@ fun main(args: Array<String>) {
     val fontSize = 50
     renderer.font = "${fontSize}px Courier New"
     renderer.textAlign = CanvasTextAlign.CENTER
-    fun clearScreen() {
-        val oldStyle = renderer.fillStyle
-        renderer.fillStyle = "#FFF"
-        renderer.fillRect(0.0, 0.0, screen.width.toDouble(), screen.height.toDouble())
-        renderer.fillStyle = oldStyle
-    }
-
     val keys = arrayOf("ArrowUp", "ArrowDown", "w", "s")
     val keyStates = hashMapOf<String, Boolean>()
     keys.forEach { keyStates[it] = false }
@@ -48,7 +41,7 @@ fun main(args: Array<String>) {
             image.onload = { renderer.drawImage(image, centerX, centerY, centerW, centerH) }
         } else {
             keys.filter { keyStates[it]!! }.forEach { keyActions[it]!!() }
-            clearScreen()
+            renderer.clearRect(0.0, 0.0, screen.width.toDouble(), screen.height.toDouble())
             mainGame.tick()
             renderer.fillText("${mainGame.playerTwoScore} : ${mainGame.playerOneScore}", screen.width.toDouble() / 2, fontSize.toDouble(), screen.width.toDouble())
             mainGame.allObjects.forEach { renderer.fillRect(it.x.toDouble(), it.y.toDouble(), it.width.toDouble(), it.height.toDouble()) }

@@ -274,14 +274,6 @@ var Pong = function (_, Kotlin) {
     simpleName: 'GameObject',
     interfaces: []
   };
-  function main$clearScreen(closure$renderer, closure$screen) {
-    return function () {
-      var oldStyle = closure$renderer.fillStyle;
-      closure$renderer.fillStyle = '#FFF';
-      closure$renderer.fillRect(0.0, 0.0, closure$screen.width, closure$screen.height);
-      closure$renderer.fillStyle = oldStyle;
-    };
-  }
   function main$lambda(closure$mainGame) {
     return function () {
       closure$mainGame.paddles[1].move_6taknv$(true);
@@ -312,7 +304,7 @@ var Pong = function (_, Kotlin) {
       return Unit;
     };
   }
-  function main$lambda_3(closure$mainGame, closure$renderer, closure$centerX, closure$centerY, closure$centerW, closure$centerH, closure$keys, closure$keyStates, closure$keyActions, closure$clearScreen, closure$screen, closure$fontSize) {
+  function main$lambda_3(closure$mainGame, closure$renderer, closure$centerX, closure$centerY, closure$centerW, closure$centerH, closure$keys, closure$keyStates, closure$keyActions, closure$screen, closure$fontSize) {
     return function () {
       var tmp$;
       if (closure$mainGame.isFinished) {
@@ -335,7 +327,7 @@ var Pong = function (_, Kotlin) {
           var element_0 = tmp$_1.next();
           ensureNotNull(closure$keyActions.get_11rb$(element_0))();
         }
-        closure$clearScreen();
+        closure$renderer.clearRect(0.0, 0.0, closure$screen.width, closure$screen.height);
         closure$mainGame.tick();
         closure$renderer.fillText(closure$mainGame.playerTwoScore.toString() + ' : ' + closure$mainGame.playerOneScore, closure$screen.width / 2, closure$fontSize, closure$screen.width);
         var $receiver_0 = closure$mainGame.allObjects;
@@ -428,7 +420,6 @@ var Pong = function (_, Kotlin) {
     var fontSize = 50;
     renderer.font = '50px Courier New';
     renderer.textAlign = 'center';
-    var clearScreen = main$clearScreen(renderer, screen);
     var keys = ['ArrowUp', 'ArrowDown', 'w', 's'];
     var keyStates = HashMap_init();
     var tmp$_1;
@@ -441,7 +432,7 @@ var Pong = function (_, Kotlin) {
     var centerY = (screen.height - mainGame.ball.height) / 2;
     var centerW = mainGame.ball.width;
     var centerH = mainGame.ball.height;
-    window.setInterval(main$lambda_3(mainGame, renderer, centerX, centerY, centerW, centerH, keys, keyStates, keyActions, clearScreen, screen, fontSize), 1000 / 20 | 0);
+    window.setInterval(main$lambda_3(mainGame, renderer, centerX, centerY, centerW, centerH, keys, keyStates, keyActions, screen, fontSize), 1000 / 20 | 0);
     window.onkeydown = main$lambda_4(keyStates);
     window.onkeyup = main$lambda_5(keyStates);
     screen.onclick = main$lambda_6(mainGame, centerX, centerW, centerY, centerH);
