@@ -45,12 +45,13 @@ fun main(args: Array<String>) {
             val image = document.createElement("IMG") as HTMLImageElement
             image.src = "restart.png"
             image.onload = { renderer.drawImage(image, centerX, centerY, centerW, centerH) }
+        } else {
+            keys.filter { keyStates[it]!! }.forEach { keyActions[it]!!() }
+            clearScreen()
+            mainGame.tick()
+            renderer.fillText("${mainGame.playerTwoScore} : ${mainGame.playerOneScore}", screen.width.toDouble() / 2, fontSize.toDouble(), screen.width.toDouble())
+            mainGame.allObjects.forEach { renderer.fillRect(it.x.toDouble(), it.y.toDouble(), it.width.toDouble(), it.height.toDouble()) }
         }
-        keys.filter { keyStates[it]!! }.forEach { keyActions[it]!!() }
-        clearScreen()
-        mainGame.tick()
-        renderer.fillText("${mainGame.playerTwoScore} : ${mainGame.playerOneScore}", screen.width.toDouble() / 2, fontSize.toDouble(), screen.width.toDouble())
-        mainGame.allObjects.forEach { renderer.fillRect(it.x.toDouble(), it.y.toDouble(), it.width.toDouble(), it.height.toDouble()) }
     }, 1000 / 20)
     window.onkeydown = {
         if (keyStates.keys.contains((it as KeyboardEvent).key)) {
@@ -66,6 +67,26 @@ fun main(args: Array<String>) {
         it as MouseEvent
         if (mainGame.isFinished && it.offsetX > centerX && it.offsetX < centerX + centerW && it.offsetY > centerY && it.offsetY < centerY + centerH) {
             mainGame.start()
+        }
+    }
+    var paddleToDrag: Paddle? = null
+    var lastMouseY: Double? = null
+    screen.onmousedown = {
+        it as MouseEvent
+        paddleToDrag = mainGame.paddles.filter { paddle -> it.offsetX > paddle.x && it.offsetX < paddle.x + paddle.width &&
+            it.offsetY > paddle.y && it.offsetY < paddle.y + paddle.height}.elementAtOrNull(0)
+        lastMouseY = it.offsetY
+        null
+    }
+    screen.onmouseup = {
+        lastMouseY = null
+        null
+    }
+    screen.onmousemove = {
+        it as MouseEvent
+        if (paddleToDrag != null) {
+            paddleToDrag!!.y += (it.offsetY - lastMouseY!!).toFloat()
+            lastMouseY = it.offsetY
         }
     }
 }

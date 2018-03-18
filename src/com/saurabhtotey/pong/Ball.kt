@@ -8,6 +8,7 @@ import kotlin.js.Math.random
  */
 class Ball(override val gameWidth: Int, override val gameHeight: Int, override val count: Int, var maxSpeed: Float) : GameObject() {
 
+    val speedMultiplier = 1.01.toFloat()
     override val width = gameHeight.toFloat() / 15
     override val height = this.width
     override var x = (gameWidth.toFloat() - this.width) / 2
@@ -32,11 +33,11 @@ class Ball(override val gameWidth: Int, override val gameHeight: Int, override v
      */
     override fun onCollide(other: GameObject) {
         if (other is Wall) {
-            this.yVelocity *= (-1.1).toFloat()
+            this.yVelocity *= -this.speedMultiplier
         } else {
-            this.xVelocity *= (-1.1).toFloat()
+            this.xVelocity *= -this.speedMultiplier
         }
-        this.maxSpeed *= 1.1.toFloat()
+        this.maxSpeed *= this.speedMultiplier
         this.speed = maxSpeed
     }
 

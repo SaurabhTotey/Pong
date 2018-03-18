@@ -23,6 +23,7 @@ var Pong = function (_, Kotlin) {
     this.gameHeight_r6006g$_0 = gameHeight;
     this.count_i5glos$_0 = count;
     this.maxSpeed = maxSpeed;
+    this.speedMultiplier = 1.01;
     this.width_8s5nz7$_0 = this.gameHeight / 15;
     this.height_2zap62$_0 = this.width;
     this.x_op7yqd$_0 = (this.gameWidth - this.width) / 2;
@@ -92,12 +93,12 @@ var Pong = function (_, Kotlin) {
   };
   Ball.prototype.onCollide_l333uf$ = function (other) {
     if (Kotlin.isType(other, Wall)) {
-      this.yVelocity = this.yVelocity * -1.1;
+      this.yVelocity = this.yVelocity * -this.speedMultiplier;
     }
      else {
-      this.xVelocity = this.xVelocity * -1.1;
+      this.xVelocity = this.xVelocity * -this.speedMultiplier;
     }
-    this.maxSpeed = this.maxSpeed * 1.1;
+    this.maxSpeed = this.maxSpeed * this.speedMultiplier;
     this.speed = this.maxSpeed;
   };
   Ball.$metadata$ = {
@@ -319,28 +320,30 @@ var Pong = function (_, Kotlin) {
         image.src = 'restart.png';
         image.onload = main$lambda$lambda(closure$renderer, image, closure$centerX, closure$centerY, closure$centerW, closure$centerH);
       }
-      var $receiver = closure$keys;
-      var destination = ArrayList_init();
-      var tmp$_0;
-      for (tmp$_0 = 0; tmp$_0 !== $receiver.length; ++tmp$_0) {
-        var element = $receiver[tmp$_0];
-        if (ensureNotNull(closure$keyStates.get_11rb$(element)))
-          destination.add_11rb$(element);
-      }
-      var tmp$_1;
-      tmp$_1 = destination.iterator();
-      while (tmp$_1.hasNext()) {
-        var element_0 = tmp$_1.next();
-        ensureNotNull(closure$keyActions.get_11rb$(element_0))();
-      }
-      closure$clearScreen();
-      closure$mainGame.tick();
-      closure$renderer.fillText(closure$mainGame.playerTwoScore.toString() + ' : ' + closure$mainGame.playerOneScore, closure$screen.width / 2, closure$fontSize, closure$screen.width);
-      var $receiver_0 = closure$mainGame.allObjects;
-      var tmp$_2;
-      for (tmp$_2 = 0; tmp$_2 !== $receiver_0.length; ++tmp$_2) {
-        var element_1 = $receiver_0[tmp$_2];
-        closure$renderer.fillRect(element_1.x, element_1.y, element_1.width, element_1.height);
+       else {
+        var $receiver = closure$keys;
+        var destination = ArrayList_init();
+        var tmp$_0;
+        for (tmp$_0 = 0; tmp$_0 !== $receiver.length; ++tmp$_0) {
+          var element = $receiver[tmp$_0];
+          if (ensureNotNull(closure$keyStates.get_11rb$(element)))
+            destination.add_11rb$(element);
+        }
+        var tmp$_1;
+        tmp$_1 = destination.iterator();
+        while (tmp$_1.hasNext()) {
+          var element_0 = tmp$_1.next();
+          ensureNotNull(closure$keyActions.get_11rb$(element_0))();
+        }
+        closure$clearScreen();
+        closure$mainGame.tick();
+        closure$renderer.fillText(closure$mainGame.playerTwoScore.toString() + ' : ' + closure$mainGame.playerOneScore, closure$screen.width / 2, closure$fontSize, closure$screen.width);
+        var $receiver_0 = closure$mainGame.allObjects;
+        var tmp$_2;
+        for (tmp$_2 = 0; tmp$_2 !== $receiver_0.length; ++tmp$_2) {
+          var element_1 = $receiver_0[tmp$_2];
+          closure$renderer.fillRect(element_1.x, element_1.y, element_1.width, element_1.height);
+        }
       }
       return Unit;
     };
@@ -377,6 +380,42 @@ var Pong = function (_, Kotlin) {
       return Unit;
     };
   }
+  var getOrNull = Kotlin.kotlin.collections.getOrNull_yzln2o$;
+  function main$lambda_7(closure$mainGame, closure$paddleToDrag, closure$lastMouseY) {
+    return function (it) {
+      var tmp$;
+      Kotlin.isType(tmp$ = it, MouseEvent) ? tmp$ : throwCCE();
+      var tmp$_0 = closure$paddleToDrag;
+      var $receiver = closure$mainGame.paddles;
+      var destination = ArrayList_init();
+      var tmp$_1;
+      for (tmp$_1 = 0; tmp$_1 !== $receiver.length; ++tmp$_1) {
+        var element = $receiver[tmp$_1];
+        if (it.offsetX > element.x && it.offsetX < element.x + element.width && it.offsetY > element.y && it.offsetY < element.y + element.height)
+          destination.add_11rb$(element);
+      }
+      tmp$_0.v = getOrNull(destination, 0);
+      closure$lastMouseY.v = it.offsetY;
+      return null;
+    };
+  }
+  function main$lambda_8(closure$lastMouseY) {
+    return function (it) {
+      closure$lastMouseY.v = null;
+      return null;
+    };
+  }
+  function main$lambda_9(closure$paddleToDrag, closure$lastMouseY) {
+    return function (it) {
+      var tmp$;
+      Kotlin.isType(tmp$ = it, MouseEvent) ? tmp$ : throwCCE();
+      if (closure$paddleToDrag.v != null) {
+        ensureNotNull(closure$paddleToDrag.v).y = ensureNotNull(closure$paddleToDrag.v).y + (it.offsetY - ensureNotNull(closure$lastMouseY.v));
+        closure$lastMouseY.v = it.offsetY;
+      }
+      return Unit;
+    };
+  }
   var HashMap_init = Kotlin.kotlin.collections.HashMap_init_q3lmfv$;
   function main(args) {
     var tmp$, tmp$_0;
@@ -406,6 +445,11 @@ var Pong = function (_, Kotlin) {
     window.onkeydown = main$lambda_4(keyStates);
     window.onkeyup = main$lambda_5(keyStates);
     screen.onclick = main$lambda_6(mainGame, centerX, centerW, centerY, centerH);
+    var paddleToDrag = {v: null};
+    var lastMouseY = {v: null};
+    screen.onmousedown = main$lambda_7(mainGame, paddleToDrag, lastMouseY);
+    screen.onmouseup = main$lambda_8(lastMouseY);
+    screen.onmousemove = main$lambda_9(paddleToDrag, lastMouseY);
   }
   function Paddle(gameWidth, gameHeight, count) {
     GameObject.call(this);
