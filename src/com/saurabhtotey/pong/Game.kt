@@ -43,7 +43,7 @@ class Game {
             return
         }
         this.allObjects.forEach { it.update() }
-        this.allObjects.forEach { obj1 -> this.allObjects.filter { obj2 -> obj1.collides(obj2) && obj1 != obj2}.forEach { obj2 -> obj1.onCollide(obj2) } }
+        this.allObjects.forEach { obj1 -> this.allObjects.filter { obj2 -> obj1.collides(obj2) && obj1 != obj2 }.forEach { obj2 -> obj1.onCollide(obj2) } }
         if (this.isFinished) {
             val ballCollidedObjects = this.allObjects.filter { it.collides(this.ball) }
             for (collidedObject in ballCollidedObjects) {

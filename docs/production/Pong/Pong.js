@@ -448,7 +448,7 @@ var Pong = function (_, Kotlin) {
     var paddleToDrag = {v: null};
     var lastMouseY = {v: null};
     screen.onmousedown = main$lambda_7(mainGame, paddleToDrag, lastMouseY);
-    screen.onmouseup = main$lambda_8(lastMouseY);
+    window.onmouseup = main$lambda_8(lastMouseY);
     screen.onmousemove = main$lambda_9(paddleToDrag, lastMouseY);
   }
   function Paddle(gameWidth, gameHeight, count) {

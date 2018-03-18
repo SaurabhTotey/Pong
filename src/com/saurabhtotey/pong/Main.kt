@@ -27,6 +27,7 @@ fun main(args: Array<String>) {
         renderer.fillRect(0.0, 0.0, screen.width.toDouble(), screen.height.toDouble())
         renderer.fillStyle = oldStyle
     }
+
     val keys = arrayOf("ArrowUp", "ArrowDown", "w", "s")
     val keyStates = hashMapOf<String, Boolean>()
     keys.forEach { keyStates[it] = false }
@@ -73,12 +74,14 @@ fun main(args: Array<String>) {
     var lastMouseY: Double? = null
     screen.onmousedown = {
         it as MouseEvent
-        paddleToDrag = mainGame.paddles.filter { paddle -> it.offsetX > paddle.x && it.offsetX < paddle.x + paddle.width &&
-            it.offsetY > paddle.y && it.offsetY < paddle.y + paddle.height}.elementAtOrNull(0)
+        paddleToDrag = mainGame.paddles.filter { paddle ->
+            it.offsetX > paddle.x && it.offsetX < paddle.x + paddle.width &&
+                    it.offsetY > paddle.y && it.offsetY < paddle.y + paddle.height
+        }.elementAtOrNull(0)
         lastMouseY = it.offsetY
         null
     }
-    screen.onmouseup = {
+    window.onmouseup = {
         lastMouseY = null
         null
     }
