@@ -1,6 +1,7 @@
 package com.saurabhtotey.pong
 
 import org.w3c.dom.*
+import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
@@ -47,7 +48,8 @@ fun main(args: Array<String>) {
                 val paddleCenter = it.y + it.height / 2
                 val ballCenter = mainGame.ball.y + mainGame.ball.height / 2
                 when {
-                    abs(paddleCenter - ballCenter) < screen.height / 10 -> { /*No action taken*/ }
+                    abs(paddleCenter - ballCenter) < screen.height / 10 -> { /*No action taken*/
+                    }
                     paddleCenter > ballCenter -> it.move(true)
                     paddleCenter < ballCenter -> it.move(false)
                 }
@@ -76,25 +78,44 @@ fun main(args: Array<String>) {
     }
     var paddleToDrag: Paddle? = null
     var lastMouseY: Double? = null
-    screen.onmousedown = {
-        it as MouseEvent
+    val mousePressed: (Event) -> Unit = {
+        var offsetX: Double
+        var offsetY: Double
+        try {
+            it as MouseEvent
+            offsetX = it.offsetX
+            offsetY = it.offsetY
+        } catch (e: ClassCastException) {
+            offsetX = it.asDynamic().targetTouches[0].pageX - screen.getBoundingClientRect().x
+            offsetY = it.asDynamic().targetTouches[0].pageY - screen.getBoundingClientRect().y
+        }
         paddleToDrag = mainGame.paddles.filter { paddle ->
-            it.offsetX > paddle.x && it.offsetX < paddle.x + paddle.width &&
-                    it.offsetY > paddle.y && it.offsetY < paddle.y + paddle.height
+            offsetX > paddle.x && offsetX < paddle.x + paddle.width &&
+                    offsetY > paddle.y && offsetY < paddle.y + paddle.height
         }.elementAtOrNull(0)
-        lastMouseY = it.offsetY
-        null
+        lastMouseY = offsetY
     }
-    window.onmouseup = {
+    val mouseReleased: (Event) -> Unit = {
         lastMouseY = null
-        null
+        paddleToDrag = null
     }
-    screen.onmousemove = {
-        it as MouseEvent
+    val mouseMoved: (Event) -> Unit = {
+        val offsetY = try {
+            it as MouseEvent
+            it.offsetY
+        } catch (e: ClassCastException) {
+            (it.asDynamic().targetTouches[0].pageY - screen.getBoundingClientRect().y) as Double
+        }
         if (paddleToDrag != null) {
-            paddleToDrag!!.y += (it.offsetY - lastMouseY!!).toFloat()
+            paddleToDrag!!.y += (offsetY - lastMouseY!!).toFloat()
             paddleToDrag!!.idleTicks = 0
-            lastMouseY = it.offsetY
+            lastMouseY = offsetY
         }
     }
+    screen.addEventListener("mousedown", mousePressed)
+    screen.addEventListener("touchstart", mousePressed)
+    window.addEventListener("mouseup", mouseReleased)
+    window.addEventListener("touchend", mouseReleased)
+    screen.addEventListener("mousemove", mouseMoved)
+    screen.addEventListener("touchmove", mouseMoved)
 }

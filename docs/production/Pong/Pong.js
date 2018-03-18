@@ -11,6 +11,7 @@ var Pong = function (_, Kotlin) {
   var to = Kotlin.kotlin.to_ujzrz7$;
   var hashMapOf = Kotlin.kotlin.collections.hashMapOf_qfcya0$;
   var ensureNotNull = Kotlin.ensureNotNull;
+  var ClassCastException = Kotlin.kotlin.ClassCastException;
   Ball.prototype = Object.create(GameObject.prototype);
   Ball.prototype.constructor = Ball;
   Paddle.prototype = Object.create(GameObject.prototype);
@@ -405,38 +406,64 @@ var Pong = function (_, Kotlin) {
     };
   }
   var getOrNull = Kotlin.kotlin.collections.getOrNull_yzln2o$;
-  function main$lambda_7(closure$mainGame, closure$paddleToDrag, closure$lastMouseY) {
+  function main$lambda_7(closure$screen, closure$mainGame, closure$paddleToDrag, closure$lastMouseY) {
     return function (it) {
       var tmp$;
-      Kotlin.isType(tmp$ = it, MouseEvent) ? tmp$ : throwCCE();
+      var offsetX = {v: null};
+      var offsetY = {v: null};
+      try {
+        Kotlin.isType(tmp$ = it, MouseEvent) ? tmp$ : throwCCE();
+        offsetX.v = it.offsetX;
+        offsetY.v = it.offsetY;
+      }
+       catch (e) {
+        if (Kotlin.isType(e, ClassCastException)) {
+          offsetX.v = it.targetTouches[0].pageX - closure$screen.getBoundingClientRect().x;
+          offsetY.v = it.targetTouches[0].pageY - closure$screen.getBoundingClientRect().y;
+        }
+         else
+          throw e;
+      }
       var tmp$_0 = closure$paddleToDrag;
       var $receiver = closure$mainGame.paddles;
       var destination = ArrayList_init();
       var tmp$_1;
       for (tmp$_1 = 0; tmp$_1 !== $receiver.length; ++tmp$_1) {
         var element = $receiver[tmp$_1];
-        if (it.offsetX > element.x && it.offsetX < element.x + element.width && it.offsetY > element.y && it.offsetY < element.y + element.height)
+        if (offsetX.v > element.x && offsetX.v < element.x + element.width && offsetY.v > element.y && offsetY.v < element.y + element.height)
           destination.add_11rb$(element);
       }
       tmp$_0.v = getOrNull(destination, 0);
-      closure$lastMouseY.v = it.offsetY;
-      return null;
+      closure$lastMouseY.v = offsetY.v;
+      return Unit;
     };
   }
-  function main$lambda_8(closure$lastMouseY) {
+  function main$lambda_8(closure$lastMouseY, closure$paddleToDrag) {
     return function (it) {
       closure$lastMouseY.v = null;
-      return null;
+      closure$paddleToDrag.v = null;
+      return Unit;
     };
   }
-  function main$lambda_9(closure$paddleToDrag, closure$lastMouseY) {
+  function main$lambda_9(closure$screen, closure$paddleToDrag, closure$lastMouseY) {
     return function (it) {
-      var tmp$;
-      Kotlin.isType(tmp$ = it, MouseEvent) ? tmp$ : throwCCE();
+      var tmp$, tmp$_0, tmp$_1;
+      try {
+        Kotlin.isType(tmp$ = it, MouseEvent) ? tmp$ : throwCCE();
+        tmp$_1 = it.offsetY;
+      }
+       catch (e) {
+        if (Kotlin.isType(e, ClassCastException)) {
+          tmp$_1 = typeof (tmp$_0 = it.targetTouches[0].pageY - closure$screen.getBoundingClientRect().y) === 'number' ? tmp$_0 : throwCCE();
+        }
+         else
+          throw e;
+      }
+      var offsetY = tmp$_1;
       if (closure$paddleToDrag.v != null) {
-        ensureNotNull(closure$paddleToDrag.v).y = ensureNotNull(closure$paddleToDrag.v).y + (it.offsetY - ensureNotNull(closure$lastMouseY.v));
+        ensureNotNull(closure$paddleToDrag.v).y = ensureNotNull(closure$paddleToDrag.v).y + (offsetY - ensureNotNull(closure$lastMouseY.v));
         ensureNotNull(closure$paddleToDrag.v).idleTicks = 0;
-        closure$lastMouseY.v = it.offsetY;
+        closure$lastMouseY.v = offsetY;
       }
       return Unit;
     };
@@ -471,9 +498,15 @@ var Pong = function (_, Kotlin) {
     screen.onclick = main$lambda_6(mainGame, centerX, centerW, centerY, centerH);
     var paddleToDrag = {v: null};
     var lastMouseY = {v: null};
-    screen.onmousedown = main$lambda_7(mainGame, paddleToDrag, lastMouseY);
-    window.onmouseup = main$lambda_8(lastMouseY);
-    screen.onmousemove = main$lambda_9(paddleToDrag, lastMouseY);
+    var mousePressed = main$lambda_7(screen, mainGame, paddleToDrag, lastMouseY);
+    var mouseReleased = main$lambda_8(lastMouseY, paddleToDrag);
+    var mouseMoved = main$lambda_9(screen, paddleToDrag, lastMouseY);
+    screen.addEventListener('mousedown', mousePressed);
+    screen.addEventListener('touchstart', mousePressed);
+    window.addEventListener('mouseup', mouseReleased);
+    window.addEventListener('touchend', mouseReleased);
+    screen.addEventListener('mousemove', mouseMoved);
+    screen.addEventListener('touchmove', mouseMoved);
   }
   function Paddle(gameWidth, gameHeight, count) {
     GameObject.call(this);
