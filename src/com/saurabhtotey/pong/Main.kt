@@ -6,7 +6,6 @@ import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.math.abs
 
 
 /**
@@ -44,16 +43,6 @@ fun main(args: Array<String>) {
             image.onload = { renderer.drawImage(image, centerX, centerY, centerW, centerH) }
         } else {
             keys.filter { keyStates[it]!! }.forEach { keyActions[it]!!() }
-            mainGame.paddles.filter { it.isCpu }.forEach {
-                val paddleCenter = it.y + it.height / 2
-                val ballCenter = mainGame.ball.y + mainGame.ball.height / 2
-                when {
-                    abs(paddleCenter - ballCenter) < screen.height / 10 -> { /*No action taken*/
-                    }
-                    paddleCenter > ballCenter -> it.move(true)
-                    paddleCenter < ballCenter -> it.move(false)
-                }
-            }
             renderer.clearRect(0.0, 0.0, screen.width.toDouble(), screen.height.toDouble())
             mainGame.tick()
             renderer.fillText("${mainGame.playerTwoScore} : ${mainGame.playerOneScore}", screen.width.toDouble() / 2, fontSize.toDouble(), screen.width.toDouble())

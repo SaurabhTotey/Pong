@@ -165,6 +165,7 @@ var Pong = function (_, Kotlin) {
     this.ball = new Ball(this.width, this.height, this.lastScorerer, this.height / 40);
   };
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_ww73n8$;
+  var Math_0 = Math;
   Game.prototype.tick = function () {
     var tmp$;
     if (this.isFinished) {
@@ -195,16 +196,37 @@ var Pong = function (_, Kotlin) {
         element_0.onCollide_l333uf$(element_2);
       }
     }
+    var $receiver_2 = this.paddles;
+    var destination_0 = ArrayList_init();
+    var tmp$_4;
+    for (tmp$_4 = 0; tmp$_4 !== $receiver_2.length; ++tmp$_4) {
+      var element_3 = $receiver_2[tmp$_4];
+      if (element_3.isCpu)
+        destination_0.add_11rb$(element_3);
+    }
+    var tmp$_5;
+    tmp$_5 = destination_0.iterator();
+    while (tmp$_5.hasNext()) {
+      var element_4 = tmp$_5.next();
+      var paddleCenter = element_4.y + element_4.height / 2;
+      var ballCenter = this.ball.y + this.ball.height / 2;
+      var x = paddleCenter - ballCenter;
+      if (Math_0.abs(x) >= (this.height / 10 | 0))
+        if (paddleCenter > ballCenter)
+          element_4.move_6taknv$(true);
+        else if (paddleCenter < ballCenter)
+          element_4.move_6taknv$(false);
+    }
     if (this.isFinished) {
-      var $receiver_2 = this.allObjects;
-      var destination_0 = ArrayList_init();
-      var tmp$_4;
-      for (tmp$_4 = 0; tmp$_4 !== $receiver_2.length; ++tmp$_4) {
-        var element_3 = $receiver_2[tmp$_4];
-        if (element_3.collides_l333uf$(this.ball))
-          destination_0.add_11rb$(element_3);
+      var $receiver_3 = this.allObjects;
+      var destination_1 = ArrayList_init();
+      var tmp$_6;
+      for (tmp$_6 = 0; tmp$_6 !== $receiver_3.length; ++tmp$_6) {
+        var element_5 = $receiver_3[tmp$_6];
+        if (element_5.collides_l333uf$(this.ball))
+          destination_1.add_11rb$(element_5);
       }
-      var ballCollidedObjects = destination_0;
+      var ballCollidedObjects = destination_1;
       tmp$ = ballCollidedObjects.iterator();
       while (tmp$.hasNext()) {
         var collidedObject = tmp$.next();
@@ -229,7 +251,6 @@ var Pong = function (_, Kotlin) {
   };
   function GameObject() {
   }
-  var Math_0 = Math;
   Object.defineProperty(GameObject.prototype, 'speed', {
     get: function () {
       var $receiver = this.xVelocity;
@@ -337,37 +358,14 @@ var Pong = function (_, Kotlin) {
           var element_0 = tmp$_1.next();
           ensureNotNull(closure$keyActions.get_11rb$(element_0))();
         }
-        var $receiver_0 = closure$mainGame.paddles;
-        var destination_0 = ArrayList_init();
-        var tmp$_2;
-        for (tmp$_2 = 0; tmp$_2 !== $receiver_0.length; ++tmp$_2) {
-          var element_1 = $receiver_0[tmp$_2];
-          if (element_1.isCpu)
-            destination_0.add_11rb$(element_1);
-        }
-        var tmp$_3;
-        tmp$_3 = destination_0.iterator();
-        while (tmp$_3.hasNext()) {
-          var element_2 = tmp$_3.next();
-          var closure$mainGame_0 = closure$mainGame;
-          var closure$screen_0 = closure$screen;
-          var paddleCenter = element_2.y + element_2.height / 2;
-          var ballCenter = closure$mainGame_0.ball.y + closure$mainGame_0.ball.height / 2;
-          var x = paddleCenter - ballCenter;
-          if (Math_0.abs(x) >= (closure$screen_0.height / 10 | 0))
-            if (paddleCenter > ballCenter)
-              element_2.move_6taknv$(true);
-            else if (paddleCenter < ballCenter)
-              element_2.move_6taknv$(false);
-        }
         closure$renderer.clearRect(0.0, 0.0, closure$screen.width, closure$screen.height);
         closure$mainGame.tick();
         closure$renderer.fillText(closure$mainGame.playerTwoScore.toString() + ' : ' + closure$mainGame.playerOneScore, closure$screen.width / 2, closure$fontSize, closure$screen.width);
-        var $receiver_1 = closure$mainGame.allObjects;
-        var tmp$_4;
-        for (tmp$_4 = 0; tmp$_4 !== $receiver_1.length; ++tmp$_4) {
-          var element_3 = $receiver_1[tmp$_4];
-          closure$renderer.fillRect(element_3.x, element_3.y, element_3.width, element_3.height);
+        var $receiver_0 = closure$mainGame.allObjects;
+        var tmp$_2;
+        for (tmp$_2 = 0; tmp$_2 !== $receiver_0.length; ++tmp$_2) {
+          var element_1 = $receiver_0[tmp$_2];
+          closure$renderer.fillRect(element_1.x, element_1.y, element_1.width, element_1.height);
         }
       }
       return Unit;
@@ -582,7 +580,7 @@ var Pong = function (_, Kotlin) {
   });
   Object.defineProperty(Paddle.prototype, 'isCpu', {
     get: function () {
-      return this.idleTicks > 75;
+      return this.idleTicks > 100;
     },
     set: function (isCpu) {
       this.isCpu_reqzsq$_0 = isCpu;
@@ -591,7 +589,7 @@ var Pong = function (_, Kotlin) {
   Paddle.prototype.adjustPosition = function () {
     this.x = this.count === 0 ? 0 : this.gameWidth - this.width;
     this.y = (this.gameHeight - this.height) / 2;
-    this.idleTicks = 60;
+    this.idleTicks = 80;
   };
   Paddle.prototype.move_6taknv$ = function (isUp) {
     this.yVelocity = this.gameHeight / 20;

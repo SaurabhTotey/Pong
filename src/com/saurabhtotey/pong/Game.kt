@@ -1,5 +1,7 @@
 package com.saurabhtotey.pong
 
+import kotlin.math.abs
+
 /**
  * The class that handles running the actual game that is played
  */
@@ -44,6 +46,16 @@ class Game {
         }
         this.allObjects.forEach { it.update() }
         this.allObjects.forEach { obj1 -> this.allObjects.filter { obj2 -> obj1.collides(obj2) && obj1 != obj2 }.forEach { obj2 -> obj1.onCollide(obj2) } }
+        this.paddles.filter { it.isCpu }.forEach {
+            val paddleCenter = it.y + it.height / 2
+            val ballCenter = this.ball.y + this.ball.height / 2
+            when {
+                abs(paddleCenter - ballCenter) < this.height / 10 -> { /*No action taken*/
+                }
+                paddleCenter > ballCenter -> it.move(true)
+                paddleCenter < ballCenter -> it.move(false)
+            }
+        }
         if (this.isFinished) {
             val ballCollidedObjects = this.allObjects.filter { it.collides(this.ball) }
             for (collidedObject in ballCollidedObjects) {

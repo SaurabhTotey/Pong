@@ -15,7 +15,7 @@ class Paddle(override val gameWidth: Int, override val gameHeight: Int, override
     override var yVelocity = 0.toFloat()
     var idleTicks = 0
     var isCpu = false
-        get() = this.idleTicks > 75
+        get() = this.idleTicks > 100
 
     /**
      * When the paddle is created, its position is set to where it actually belongs
@@ -30,7 +30,7 @@ class Paddle(override val gameWidth: Int, override val gameHeight: Int, override
     fun adjustPosition() {
         this.x = if (this.count == 0) 0.toFloat() else this.gameWidth - this.width
         this.y = (this.gameHeight - this.height) / 2
-        this.idleTicks = 60
+        this.idleTicks = 80
     }
 
     /**
