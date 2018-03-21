@@ -6,6 +6,7 @@ import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent
 import kotlin.browser.document
 import kotlin.browser.window
+import kotlin.math.roundToInt
 
 
 /**
@@ -35,6 +36,16 @@ fun main(args: Array<String>) {
     val centerY = (screen.height - mainGame.ball.height).toDouble() / 2
     val centerW = mainGame.ball.width.toDouble()
     val centerH = mainGame.ball.height.toDouble()
+    val iconLink = document.createElement("link") as HTMLLinkElement
+    iconLink.rel = "icon"
+    val icon = document.createElement("canvas") as HTMLCanvasElement
+    icon.width = centerW.roundToInt()
+    icon.height = centerH.roundToInt()
+    val iconDrawer = icon.getContext("2d") as CanvasRenderingContext2D
+    iconDrawer.fillStyle = "#ADD8E6"
+    iconDrawer.fillRect(0.0, 0.0, centerW, centerH)
+    iconLink.href = icon.toDataURL()
+    (document.head as HTMLHeadElement).appendChild(iconLink)
     window.setInterval({
         if (mainGame.isFinished) {
             val image = document.createElement("IMG") as HTMLImageElement

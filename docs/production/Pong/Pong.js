@@ -10,6 +10,7 @@ var Pong = function (_, Kotlin) {
   var throwCCE = Kotlin.throwCCE;
   var to = Kotlin.kotlin.to_ujzrz7$;
   var hashMapOf = Kotlin.kotlin.collections.hashMapOf_qfcya0$;
+  var roundToInt = Kotlin.kotlin.math.roundToInt_yrwdxr$;
   var ensureNotNull = Kotlin.ensureNotNull;
   var ClassCastException = Kotlin.kotlin.ClassCastException;
   Ball.prototype = Object.create(GameObject.prototype);
@@ -468,7 +469,7 @@ var Pong = function (_, Kotlin) {
   }
   var HashMap_init = Kotlin.kotlin.collections.HashMap_init_q3lmfv$;
   function main(args) {
-    var tmp$, tmp$_0;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
     var mainGame = new Game();
     var screen = Kotlin.isType(tmp$ = document.getElementById('screen'), HTMLCanvasElement) ? tmp$ : throwCCE();
     screen.width = mainGame.width;
@@ -480,9 +481,9 @@ var Pong = function (_, Kotlin) {
     renderer.textAlign = 'center';
     var keys = ['ArrowUp', 'ArrowDown', 'w', 's'];
     var keyStates = HashMap_init();
-    var tmp$_1;
-    for (tmp$_1 = 0; tmp$_1 !== keys.length; ++tmp$_1) {
-      var element = keys[tmp$_1];
+    var tmp$_5;
+    for (tmp$_5 = 0; tmp$_5 !== keys.length; ++tmp$_5) {
+      var element = keys[tmp$_5];
       keyStates.put_xwzc9p$(element, false);
     }
     var keyActions = hashMapOf([to(keys[0], main$lambda(mainGame)), to(keys[1], main$lambda_0(mainGame)), to(keys[2], main$lambda_1(mainGame)), to(keys[3], main$lambda_2(mainGame))]);
@@ -490,6 +491,16 @@ var Pong = function (_, Kotlin) {
     var centerY = (screen.height - mainGame.ball.height) / 2;
     var centerW = mainGame.ball.width;
     var centerH = mainGame.ball.height;
+    var iconLink = Kotlin.isType(tmp$_1 = document.createElement('link'), HTMLLinkElement) ? tmp$_1 : throwCCE();
+    iconLink.rel = 'icon';
+    var icon = Kotlin.isType(tmp$_2 = document.createElement('canvas'), HTMLCanvasElement) ? tmp$_2 : throwCCE();
+    icon.width = roundToInt(centerW);
+    icon.height = roundToInt(centerH);
+    var iconDrawer = Kotlin.isType(tmp$_3 = icon.getContext('2d'), CanvasRenderingContext2D) ? tmp$_3 : throwCCE();
+    iconDrawer.fillStyle = '#ADD8E6';
+    iconDrawer.fillRect(0.0, 0.0, centerW, centerH);
+    iconLink.href = icon.toDataURL();
+    (Kotlin.isType(tmp$_4 = document.head, HTMLHeadElement) ? tmp$_4 : throwCCE()).appendChild(iconLink);
     window.setInterval(main$lambda_3(mainGame, renderer, centerX, centerY, centerW, centerH, keys, keyStates, keyActions, screen, fontSize), 1000 / 20 | 0);
     window.onkeydown = main$lambda_4(keyStates);
     window.onkeyup = main$lambda_5(keyStates);
